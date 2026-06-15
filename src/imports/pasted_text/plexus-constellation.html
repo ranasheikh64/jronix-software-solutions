@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Plexus Constellation</title>
+    <!-- Three.js Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #010515;
+            cursor: pointer;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        /* Vignette overlay for depth and cinematic atmosphere */
+        .vignette-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(2, 12, 41, 0) 20%, rgba(1, 5, 20, 0.8) 90%);
+            pointer-events: none;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pure 3D Canvas Background -->
+    <div id="canvas-container"></div>
+    <div class="vignette-overlay"></div>
+
+    <script>
+        let scene, camera, renderer, clock;
+        let particlePoints, lineSegments, triangleMesh;
+        let nodes = [];
+        
+        // Configurable Animation Parameters
+        const settings = {
+            speed: 1.0,
+            range: 7.5,
+            density: 150,
+            faceOpacity: 0.12,
+            theme: 'electricBlue',
+            autoRotate: true,
+            mousePull: true
+        };
+
+        // Interaction States
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        let mouse3D = new THREE.Vector3(0, 0, 0);
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        // Custom Theme Presets
+        const colorPresets = {
+            electricBlue: {
+                bg: 0x010515,
+                nodeColor: 0x00f0ff,
+                lineColor: 0x0055ff,
+                faceColor: 0x003cd0,
+                glow: 0x00ddff
+            },
+            deepSpacePurple: {
+                bg: 0x080112,
+                nodeColor: 0xd300ff,
+                lineColor: 0x3900a6,
+                faceColor: 0x550080,
+                glow: 0xff00b7
+            },
+            emeraldCyber: {
+                bg: 0x010c08,
+                nodeColor: 0x00ff88,
+                lineColor: 0x005c2e,
+                faceColor: 0x00441a,
+                glow: 0x00ffaa
+            },
+            retroAmber: {
+                bg: 0x0e0501,
+                nodeColor: 0xff8800,
+                lineColor: 0x882200,
+                faceColor: 0x551100,
+                glow: 0xffaa00
+            }
+        };
+
+        function init() {
+            const container = document.getElementById('canvas-container');
+            clock = new THREE.Clock();
+
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(colorPresets[settings.theme].bg, 0.02);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.z = 25;
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(scene.fog.color);
+            container.appendChild(renderer.domElement);
+
+            // Build constellation network
+            const pointTexture = createPointGlowTexture();
+            rebuildSystem(pointTexture);
+
+            // Universal Window Interactions
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('mousemove', onDocumentMouseMove);
+            document.addEventListener('touchmove', onDocumentTouchMove, { passive: true });
+            
+            // Screen Click/Tap to change color palettes seamlessly
+            window.addEventListener('click', changeColorsPreset);
+
+            animate();
+        }
+
+        // Generates soft glowing circular particle sprites dynamically
+        function createPointGlowTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.2, 'rgba(0, 240, 255, 0.9)');
+            gradient.addColorStop(0.5, 'rgba(0, 80, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 64, 64);
+            
+            const texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        // Reconstructs/Generates the node elements, lines and triangles
+        function rebuildSystem(texture) {
+            if (particlePoints) scene.remove(particlePoints);
+            if (lineSegments) scene.remove(lineSegments);
+            if (triangleMesh) scene.remove(triangleMesh);
+
+            nodes = [];
+            const activePreset = colorPresets[settings.theme];
+
+            // 1. Initialize random vector coordinates
+            for (let i = 0; i < settings.density; i++) {
+                nodes.push({
+                    pos: new THREE.Vector3(
+                        (Math.random() - 0.5) * 32,
+                        (Math.random() - 0.5) * 18,
+                        (Math.random() - 0.5) * 16
+                    ),
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.05,
+                        (Math.random() - 0.5) * 0.05,
+                        (Math.random() - 0.5) * 0.05
+                    )
+                });
+            }
+
+            // 2. Mesh Nodes Point Cloud
+            const nodeGeometry = new THREE.BufferGeometry();
+            const nodePositions = new Float32Array(settings.density * 3);
+
+            for (let i = 0; i < settings.density; i++) {
+                nodePositions[i * 3] = nodes[i].pos.x;
+                nodePositions[i * 3 + 1] = nodes[i].pos.y;
+                nodePositions[i * 3 + 2] = nodes[i].pos.z;
+            }
+
+            nodeGeometry.setAttribute('position', new THREE.BufferAttribute(nodePositions, 3));
+
+            const pointMaterial = new THREE.PointsMaterial({
+                size: 0.45,
+                map: texture,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                color: activePreset.nodeColor
+            });
+
+            particlePoints = new THREE.Points(nodeGeometry, pointMaterial);
+            scene.add(particlePoints);
+
+            // 3. Network Connection Lines
+            const maxConnections = settings.density * 6;
+            const lineGeometry = new THREE.BufferGeometry();
+            const linePos = new Float32Array(maxConnections * 2 * 3);
+            const lineCol = new Float32Array(maxConnections * 2 * 3);
+
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
+            lineGeometry.setAttribute('color', new THREE.BufferAttribute(lineCol, 3));
+
+            const lineMaterial = new THREE.LineBasicMaterial({
+                vertexColors: true,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                opacity: 0.65
+            });
+
+            lineSegments = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lineSegments);
+
+            // 4. Mesh Triangle Faces
+            const maxTriangles = settings.density * 4;
+            const triGeometry = new THREE.BufferGeometry();
+            const triPos = new Float32Array(maxTriangles * 3 * 3);
+            const triCol = new Float32Array(maxTriangles * 3 * 3);
+
+            triGeometry.setAttribute('position', new THREE.BufferAttribute(triPos, 3));
+            triGeometry.setAttribute('color', new THREE.BufferAttribute(triCol, 3));
+
+            const triMaterial = new THREE.MeshBasicMaterial({
+                vertexColors: true,
+                side: THREE.DoubleSide,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                opacity: settings.faceOpacity
+            });
+
+            triangleMesh = new THREE.Mesh(triGeometry, triMaterial);
+            scene.add(triangleMesh);
+        }
+
+        function onDocumentMouseMove(event) {
+            mouseX = (event.clientX - windowHalfX) / 100;
+            mouseY = (event.clientY - windowHalfY) / 100;
+
+            mouse3D.set(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1,
+                0.5
+            );
+            mouse3D.unproject(camera);
+            const dir = mouse3D.sub(camera.position).normalize();
+            const distance = -camera.position.z / dir.z;
+            mouse3D.copy(camera.position).add(dir.multiplyScalar(distance));
+        }
+
+        function onDocumentTouchMove(event) {
+            if (event.touches.length === 1) {
+                mouseX = (event.touches[0].pageX - windowHalfX) / 100;
+                mouseY = (event.touches[0].pageY - windowHalfY) / 100;
+                
+                mouse3D.set(
+                    (event.touches[0].pageX / window.innerWidth) * 2 - 1,
+                    -(event.touches[0].pageY / window.innerHeight) * 2 + 1,
+                    0.5
+                );
+                mouse3D.unproject(camera);
+                const dir = mouse3D.sub(camera.position).normalize();
+                const distance = -camera.position.z / dir.z;
+                mouse3D.copy(camera.position).add(dir.multiplyScalar(distance));
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
+
+        function render() {
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime() * settings.speed;
+
+            // Camera Movement Parallax & Orbit dynamics
+            if (settings.autoRotate) {
+                targetX += 0.002;
+            }
+            camera.position.x += (mouseX - camera.position.x + Math.sin(targetX) * 3) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y + Math.cos(targetX) * 1.5) * 0.05;
+            camera.lookAt(scene.position);
+
+            const activeColors = colorPresets[settings.theme];
+            const nodeCount = settings.density;
+
+            // Particle positions calculation loop
+            for (let i = 0; i < nodeCount; i++) {
+                const node = nodes[i];
+                node.pos.addScaledVector(node.velocity, settings.speed * 0.5);
+
+                // Boundary bounce checks
+                if (Math.abs(node.pos.x) > 20) node.velocity.x *= -1;
+                if (Math.abs(node.pos.y) > 12) node.velocity.y *= -1;
+                if (Math.abs(node.pos.z) > 10) node.velocity.z *= -1;
+
+                // Dynamic mouse gravity pull
+                if (settings.mousePull) {
+                    const distToMouse = node.pos.distanceTo(mouse3D);
+                    if (distToMouse < 8.0) {
+                        const pullFactor = (8.0 - distToMouse) * 0.005 * settings.speed;
+                        node.pos.lerp(mouse3D, pullFactor);
+                    }
+                }
+            }
+
+            // Push position updates back to the point cloud buffer geometry
+            const positions = particlePoints.geometry.attributes.position.array;
+            for (let i = 0; i < nodeCount; i++) {
+                positions[i * 3] = nodes[i].pos.x;
+                positions[i * 3 + 1] = nodes[i].pos.y;
+                positions[i * 3 + 2] = nodes[i].pos.z;
+            }
+            particlePoints.geometry.attributes.position.needsUpdate = true;
+
+            // Plexus connectors & triangles geometry recalculation
+            const linePositions = lineSegments.geometry.attributes.position.array;
+            const lineColors = lineSegments.geometry.attributes.color.array;
+            const triPositions = triangleMesh.geometry.attributes.position.array;
+            const triColors = triangleMesh.geometry.attributes.color.array;
+
+            let lineIndex = 0;
+            let triIndex = 0;
+
+            const maxLineSegments = nodeCount * 6;
+            const maxTriMeshCount = nodeCount * 4;
+
+            const baseColor = new THREE.Color(activeColors.lineColor);
+            const secondaryColor = new THREE.Color(activeColors.nodeColor);
+            const faceColor = new THREE.Color(activeColors.faceColor);
+
+            for (let i = 0; i < nodeCount; i++) {
+                const nodeA = nodes[i];
+                let connectedCount = 0;
+
+                for (let j = i + 1; j < nodeCount; j++) {
+                    const nodeB = nodes[j];
+                    const dist = nodeA.pos.distanceTo(nodeB.pos);
+
+                    if (dist < settings.range && connectedCount < 6) {
+                        if (lineIndex < maxLineSegments) {
+                            const vertexOffsetA = lineIndex * 6;
+                            const vertexOffsetB = vertexOffsetA + 3;
+
+                            linePositions[vertexOffsetA] = nodeA.pos.x;
+                            linePositions[vertexOffsetA + 1] = nodeA.pos.y;
+                            linePositions[vertexOffsetA + 2] = nodeA.pos.z;
+
+                            linePositions[vertexOffsetB] = nodeB.pos.x;
+                            linePositions[vertexOffsetB + 1] = nodeB.pos.y;
+                            linePositions[vertexOffsetB + 2] = nodeB.pos.z;
+
+                            const alpha = 1.0 - (dist / settings.range);
+                            
+                            lineColors[vertexOffsetA] = baseColor.r * alpha;
+                            lineColors[vertexOffsetA + 1] = baseColor.g * alpha;
+                            lineColors[vertexOffsetA + 2] = baseColor.b * alpha;
+
+                            lineColors[vertexOffsetB] = secondaryColor.r * alpha;
+                            lineColors[vertexOffsetB + 1] = secondaryColor.g * alpha;
+                            lineColors[vertexOffsetB + 2] = secondaryColor.b * alpha;
+
+                            lineIndex++;
+                            connectedCount++;
+                        }
+
+                        // Build triangular facets
+                        for (let k = j + 1; k < nodeCount; k++) {
+                            const nodeC = nodes[k];
+                            const distAC = nodeA.pos.distanceTo(nodeC.pos);
+                            const distBC = nodeB.pos.distanceTo(nodeC.pos);
+                            const faceRange = settings.range * 0.75;
+
+                            if (distAC < faceRange && distBC < faceRange) {
+                                if (triIndex < maxTriMeshCount) {
+                                    const triOffset = triIndex * 9;
+
+                                    triPositions[triOffset] = nodeA.pos.x;
+                                    triPositions[triOffset + 1] = nodeA.pos.y;
+                                    triPositions[triOffset + 2] = nodeA.pos.z;
+
+                                    triPositions[triOffset + 3] = nodeB.pos.x;
+                                    triPositions[triOffset + 4] = nodeB.pos.y;
+                                    triPositions[triOffset + 5] = nodeB.pos.z;
+
+                                    triPositions[triOffset + 6] = nodeC.pos.x;
+                                    triPositions[triOffset + 7] = nodeC.pos.y;
+                                    triPositions[triOffset + 8] = nodeC.pos.z;
+
+                                    const combinedDist = (dist + distAC + distBC) / 3.0;
+                                    const triAlpha = 1.0 - (combinedDist / faceRange);
+
+                                    for (let offset = 0; offset < 9; offset += 3) {
+                                        triColors[triOffset + offset] = faceColor.r * triAlpha;
+                                        triColors[triOffset + offset + 1] = faceColor.g * triAlpha;
+                                        triColors[triOffset + offset + 2] = faceColor.b * triAlpha;
+                                    }
+
+                                    triIndex++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            lineSegments.geometry.setDrawRange(0, lineIndex * 2);
+            lineSegments.geometry.attributes.position.needsUpdate = true;
+            lineSegments.geometry.attributes.color.needsUpdate = true;
+
+            triangleMesh.geometry.setDrawRange(0, triIndex * 3);
+            triangleMesh.geometry.attributes.position.needsUpdate = true;
+            triangleMesh.geometry.attributes.color.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+
+        // Color Theme Presets Switcher
+        function applyColorTheme(themeKey) {
+            settings.theme = themeKey;
+            const themeColors = colorPresets[themeKey];
+
+            scene.fog.color.setHex(themeColors.bg);
+            renderer.setClearColor(scene.fog.color);
+
+            const tex = createPointGlowTexture();
+            rebuildSystem(tex);
+        }
+
+        function changeColorsPreset() {
+            const keys = Object.keys(colorPresets);
+            const currentIdx = keys.indexOf(settings.theme);
+            const nextIdx = (currentIdx + 1) % keys.length;
+            applyColorTheme(keys[nextIdx]);
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            init();
+        };
+    </script>
+</body>
+</html>
