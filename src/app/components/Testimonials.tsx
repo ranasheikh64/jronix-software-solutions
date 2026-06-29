@@ -127,8 +127,16 @@ export function Testimonials() {
         </motion.div>
       </div>
 
-      {/* Infinite scroll track — full bleed */}
-      <TrackWithPause loopedReviews={loopedReviews} totalWidth={totalWidth} />
+      {/* Reviews Display */}
+      {reviewsData.length <= 3 ? (
+        <div className="flex justify-center gap-5 px-6 max-w-7xl mx-auto flex-wrap">
+          {reviewsData.map((review, i) => (
+             <ReviewCard key={`${review._id || review.id}-${i}`} review={review} />
+          ))}
+        </div>
+      ) : (
+        <TrackWithPause loopedReviews={loopedReviews} totalWidth={totalWidth} />
+      )}
     </section>
   );
 }

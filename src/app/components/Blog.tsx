@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Clock, ArrowRight } from "lucide-react";
 import apiClient from "../../api/client";
 
 export function Blog() {
   const [postsData, setPostsData] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -60,6 +62,7 @@ export function Blog() {
                 transition={{ delay: i * 0.1 }}
                 className="group rounded-xl overflow-hidden cursor-pointer"
                 style={{ background: "#0a1628", border: "1px solid rgba(0,170,255,0.1)" }}
+                onClick={() => navigate(`/blog/${post._id}`)}
               >
                 <div className="relative h-44 overflow-hidden">
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />

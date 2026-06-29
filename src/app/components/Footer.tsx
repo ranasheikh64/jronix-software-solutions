@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Github, Twitter, Linkedin, Instagram, ArrowUp, Send } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
 import apiClient from "../../api/client";
@@ -13,20 +14,27 @@ const iconMap: Record<string, any> = {
 };
 
 export function Footer() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [footerData, setFooterData] = useState<any>(null);
 
+  const [servicesData, setServicesData] = useState<any[]>([]);
+
   useEffect(() => {
-    const fetchFooter = async () => {
+    const fetchFooterData = async () => {
       try {
-        const response = await apiClient.get('/footer');
-        setFooterData(response.data);
+        const [footerRes, servicesRes] = await Promise.all([
+          apiClient.get('/footer'),
+          apiClient.get('/services')
+        ]);
+        setFooterData(footerRes.data);
+        setServicesData(servicesRes.data);
       } catch (error) {
-        console.error("Failed to fetch footer:", error);
+        console.error("Failed to fetch footer data:", error);
       }
     };
-    fetchFooter();
+    fetchFooterData();
   }, []);
 
   const description = footerData?.description || "Building digital products that matter — from Dhaka to the world.";
@@ -36,9 +44,14 @@ export function Footer() {
     { platform: "linkedin", url: "#" },
     { platform: "instagram", url: "#" }
   ];
-  const quickLinks = footerData?.quickLinks || ["Home", "About", "Services", "Work", "Blog", "Contact"].map(name => ({ name }));
-  const serviceLinks = footerData?.servicesLinks || ["App Development", "Web Development", "AI Development", "UI/UX Design", "App Publishing", "WordPress"].map(name => ({ name }));
-  const bottomLinks = footerData?.bottomLinks || ["Privacy Policy", "Terms of Service"].map(name => ({ name }));
+  const quickLinks = footerData?.quickLinks?.length > 0 ? footerData.quickLinks : ["Home", "About", "Services", "Work", "Blog", "Contact"].map(name => ({ name }));
+
+  // Get services from services API if available, else fallback
+  const serviceLinks = servicesData?.length > 0
+    ? servicesData.slice(0, 6).map((s: any) => ({ name: s.title, url: "#" }))
+    : footerData?.servicesLinks?.length > 0 ? footerData.servicesLinks : ["App Development", "Web Development", "AI Development", "UI/UX Design", "App Publishing", "WordPress"].map(name => ({ name }));
+
+  const bottomLinks = footerData?.bottomLinks?.length > 0 ? footerData.bottomLinks : ["Privacy Policy", "Terms of Service"].map(name => ({ name }));
   const copyrightText = footerData?.copyrightText || "© 2025 Jronix. All rights reserved.";
 
   return (
@@ -59,7 +72,7 @@ export function Footer() {
               {description}
             </p>
             <div className="flex gap-3">
-              {socialLinks.map((link: any, i: number) => {
+              {socialLinks?.map((link: any, i: number) => {
                 const Icon = iconMap[link.platform?.toLowerCase()] || Github;
                 return (
                   <a key={i} href={link.url} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110" style={{ background: "rgba(0,170,255,0.08)", border: "1px solid rgba(0,170,255,0.15)", color: "#7aa8cc" }}>
@@ -74,17 +87,24 @@ export function Footer() {
           <div>
             <p className="text-xs mb-4 uppercase tracking-widest" style={{ color: "#00aaff", fontFamily: "JetBrains Mono, monospace" }}>Quick Links</p>
             <ul className="flex flex-col gap-2">
-              {quickLinks.map((link: any) => (
-                <li key={link.name || link}>
-                  <button
-                    onClick={() => { const el = document.getElementById((link.name || link).toLowerCase()); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
-                    className="text-sm transition-colors hover:text-white"
-                    style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}
-                  >
-                    {link.name || link}
-                  </button>
-                </li>
-              ))}
+              {quickLinks?.map((link: any) => {
+                const linkName = typeof link === 'string' ? link : link.name || "";
+                return (
+                  <li key={linkName || link}>
+                    <button
+                      onClick={() => {
+                        if (!linkName) return;
+                        const el = document.getElementById(linkName.toLowerCase());
+                        if (el) el.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="text-sm transition-colors hover:text-white"
+                      style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}
+                    >
+                      {linkName}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -92,11 +112,14 @@ export function Footer() {
           <div>
             <p className="text-xs mb-4 uppercase tracking-widest" style={{ color: "#00aaff", fontFamily: "JetBrains Mono, monospace" }}>Services</p>
             <ul className="flex flex-col gap-2">
-              {serviceLinks.map((s: any) => (
-                <li key={s.name || s}>
-                  <span className="text-sm" style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}>{s.name || s}</span>
-                </li>
-              ))}
+              {serviceLinks?.map((s: any) => {
+                const sName = typeof s === 'string' ? s : s.name || "";
+                return (
+                  <li key={sName || s}>
+                    <span className="text-sm" style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}>{sName}</span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -134,9 +157,32 @@ export function Footer() {
             {copyrightText}
           </p>
           <div className="flex gap-4">
-            {bottomLinks.map((link: any) => (
-              <span key={link.name || link} className="text-xs cursor-pointer hover:text-white transition-colors" style={{ color: "#3a6080", fontFamily: "Inter, sans-serif" }}>{link.name || link}</span>
-            ))}
+            {bottomLinks?.map((link: any) => {
+              const linkName = typeof link === 'string' ? link : link.name || "";
+              const handleClick = () => {
+                if (link.url && link.url !== "#") {
+                  if (link.url.startsWith('/')) {
+                    navigate(link.url);
+                  } else {
+                    window.open(link.url, '_blank');
+                  }
+                } else {
+                  // Fallback based on name if URL is not properly set
+                  if (linkName?.toLowerCase().includes("privacy")) navigate("/privacy-policy");
+                  else if (linkName?.toLowerCase().includes("terms")) navigate("/terms-conditions");
+                }
+              };
+              return (
+                <button
+                  key={linkName || link}
+                  onClick={handleClick}
+                  className="text-xs cursor-pointer hover:text-white transition-colors"
+                  style={{ color: "#3a6080", fontFamily: "Inter, sans-serif" }}
+                >
+                  {linkName}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

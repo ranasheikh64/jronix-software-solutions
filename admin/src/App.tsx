@@ -16,16 +16,29 @@ import HeroPage from './pages/Hero';
 import AboutPage from './pages/About';
 import ServicesPage from './pages/Services';
 import ProjectsPage from './pages/Projects';
+import BlogsPage from './pages/Blogs';
+import CareersPage from './pages/Careers';
+import StatsPage from './pages/Stats';
+import TeamPage from './pages/Team';
+import TechPage from './pages/Tech';
+import ReviewsPage from './pages/Reviews';
+import MessagesPage from './pages/Messages';
+import ContactSettingsPage from './pages/ContactSettings';
+import FooterSettingsPage from './pages/FooterSettings';
 
 const Sidebar = () => {
   const location = useLocation();
   const links = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Messages', path: '/messages', icon: MessageSquare },
+    { name: 'Contact Info', path: '/contact-settings', icon: Info },
     { name: 'Hero Section', path: '/hero', icon: ImageIcon },
     { name: 'About Section', path: '/about', icon: Info },
     { name: 'Services', path: '/services', icon: Briefcase },
     { name: 'Projects', path: '/projects', icon: Layers },
+    { name: 'Team', path: '/team', icon: Info },
+    { name: 'Tech Stack', path: '/tech', icon: Layers },
+    { name: 'Careers', path: '/careers', icon: Briefcase },
     { name: 'Reviews', path: '/reviews', icon: Star },
     { name: 'Stats', path: '/stats', icon: BarChart2 },
     { name: 'Blogs', path: '/blogs', icon: FileText },
@@ -34,8 +47,9 @@ const Sidebar = () => {
 
   return (
     <div className="w-64 bg-slate-900 border-r border-slate-800 h-screen fixed top-0 left-0 flex flex-col">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-white tracking-wider font-mono">JRONIX<span className="text-blue-500">_ADMIN</span></h1>
+      <div className="p-6 flex items-center gap-3">
+        <img src="/logo.jpg" alt="Jronix Logo" className="w-8 h-8 rounded-full border border-slate-700" />
+        <h1 className="text-xl font-bold text-white tracking-wider font-mono">JRONIX<span className="text-blue-500">_ADMIN</span></h1>
       </div>
       <nav className="flex-1 overflow-y-auto px-4 pb-4">
         <ul className="space-y-1">
@@ -76,7 +90,6 @@ const Topbar = () => {
 };
 
 const Dashboard = () => <div className="p-8"><h1 className="text-2xl font-bold">Welcome to Admin Dashboard</h1></div>;
-const Messages = () => <div className="p-8">Messages (Coming Soon)</div>;
 
 function App() {
   return (
@@ -88,11 +101,19 @@ function App() {
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/messages" element={<Messages />} />
+              <Route path="/messages" element={<MessagesPage />} />
+              <Route path="/contact-settings" element={<ContactSettingsPage />} />
               <Route path="/hero" element={<HeroPage />} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/team" element={<TeamPage />} />
+              <Route path="/tech" element={<TechPage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
+              <Route path="/stats" element={<StatsPage />} />
+              <Route path="/blogs" element={<BlogsPage />} />
+              <Route path="/footer" element={<FooterSettingsPage />} />
               {/* Other routes will be added later */}
             </Routes>
           </main>

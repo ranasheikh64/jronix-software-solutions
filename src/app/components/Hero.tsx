@@ -34,7 +34,7 @@ export function Hero() {
     fetchHeroData();
   }, []);
 
-  const typewriterWords = heroData?.typewriterWords || ["Digital Products", "Mobile Apps", "Web Platforms", "AI Solutions"];
+  const typewriterWords = (heroData?.titles?.length > 0) ? heroData.titles : ["Digital Products", "Mobile Apps", "Web Platforms", "AI Solutions"];
 
   useEffect(() => {
     const word = typewriterWords[wordIndex];

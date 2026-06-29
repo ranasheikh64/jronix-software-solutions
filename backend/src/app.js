@@ -18,6 +18,7 @@ const blogRoutes = require('./routes/blogRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const footerRoutes = require('./routes/footerRoutes');
 const newsletterRoutes = require('./routes/newsletterRoutes');
+const jobApplicationRoutes = require('./routes/jobApplicationRoutes');
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/blogs', blogRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/footer', footerRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/applications', jobApplicationRoutes);
 
 // Base Route
 app.get('/', (req, res) => {

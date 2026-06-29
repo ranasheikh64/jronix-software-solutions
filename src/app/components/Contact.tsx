@@ -1,17 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Mail, Phone, MapPin, Clock, Send, MessageCircle } from "lucide-react";
+import apiClient from "../../api/client";
 
 const services = ["App Development", "Web Development", "AI Development", "UI/UX Design", "WordPress", "Other"];
 const budgets = ["< $500", "$500 – $2,000", "$2,000 – $5,000", "$5,000 – $10,000", "$10,000+"];
 
 export function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [contactInfo, setContactInfo] = useState<any>(null);
   const [form, setForm] = useState({ name: "", email: "", phone: "", service: "", budget: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchInfo = async () => {
+      try {
+        const res = await apiClient.get('/contact/info');
+        setContactInfo(res.data);
+      } catch (err) {
+        console.error("Failed to fetch contact info", err);
+      }
+    };
+    fetchInfo();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await apiClient.post('/contact/messages', {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        service: form.service || "Other",
+        budget: form.budget || "Not specified",
+        projectDetails: form.message
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send message");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputStyle = {
@@ -80,8 +111,8 @@ export function Contact() {
                     </select>
                   </div>
                   <textarea required rows={4} placeholder="Tell us about your project..." value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} style={{ ...inputStyle, resize: "none" }} />
-                  <button type="submit" className="flex items-center justify-center gap-2 py-3 rounded-lg text-sm transition-all duration-200 hover:opacity-90" style={{ background: "linear-gradient(135deg, #0077cc, #00d4ff)", color: "#fff", fontFamily: "Inter, sans-serif" }}>
-                    <Send size={14} /> Send Message
+                  <button type="submit" disabled={loading} className="flex items-center justify-center gap-2 py-3 rounded-lg text-sm transition-all duration-200 hover:opacity-90 disabled:opacity-50" style={{ background: "linear-gradient(135deg, #0077cc, #00d4ff)", color: "#fff", fontFamily: "Inter, sans-serif" }}>
+                    <Send size={14} /> {loading ? "Sending..." : "Send Message"}
                   </button>
                 </form>
               )}
@@ -91,10 +122,10 @@ export function Contact() {
           {/* Info */}
           <div className="lg:col-span-2 flex flex-col gap-5">
             {[
-              { icon: Mail, label: "Email", value: "hello@jronix.com", color: "#00aaff" },
-              { icon: Phone, label: "WhatsApp / Phone", value: "+880 1700-000000", color: "#34d399" },
-              { icon: MapPin, label: "Location", value: "Dhaka, Bangladesh", color: "#f472b6" },
-              { icon: Clock, label: "Business Hours", value: "Sat – Thu, 9am – 8pm BST", color: "#fb923c" },
+              { icon: Mail, label: "Email", value: contactInfo?.email || "hello@jronix.com", color: "#00aaff" },
+              { icon: Phone, label: "WhatsApp / Phone", value: contactInfo?.whatsapp || "+880 1700-000000", color: "#34d399" },
+              { icon: MapPin, label: "Location", value: contactInfo?.location || "Dhaka, Bangladesh", color: "#f472b6" },
+              { icon: Clock, label: "Business Hours", value: contactInfo?.businessHours || "Sat – Thu, 9am – 8pm BST", color: "#fb923c" },
             ].map(({ icon: Icon, label, value, color }) => (
               <div key={label} className="flex gap-4 items-start p-5 rounded-xl" style={{ background: "rgba(13,31,60,0.6)", border: "1px solid rgba(0,170,255,0.1)" }}>
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
@@ -108,7 +139,7 @@ export function Contact() {
             ))}
 
             <a
-              href="https://wa.me/8801700000000"
+              href={`https://wa.me/${(contactInfo?.whatsapp || "+8801700000000").replace(/\D/g, '')}`}
               className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm mt-2 transition-all duration-200 hover:opacity-90"
               style={{ background: "linear-gradient(135deg, #075e54, #128c7e)", color: "#fff", fontFamily: "Inter, sans-serif" }}
             >
@@ -120,7 +151,7 @@ export function Contact() {
 
       {/* WhatsApp floating button */}
       <a
-        href="https://wa.me/8801700000000"
+        href={`https://wa.me/${(contactInfo?.whatsapp || "+8801700000000").replace(/\D/g, '')}`}
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center z-40 shadow-2xl transition-all duration-200 hover:scale-110"
         style={{ background: "linear-gradient(135deg, #075e54, #25d366)", boxShadow: "0 0 20px rgba(37,211,102,0.4)" }}
       >

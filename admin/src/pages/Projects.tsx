@@ -15,6 +15,7 @@ export default function Projects() {
     description: '',
     image: '',
     link: '#',
+    githubLink: '#',
     techStack: '',
     typeBadge: '',
     isFeatured: false,
@@ -80,6 +81,7 @@ export default function Projects() {
       description: formData.description,
       image: formData.image,
       link: formData.link,
+      githubLink: formData.githubLink,
       typeBadge: formData.typeBadge,
       isFeatured: formData.isFeatured,
       techStack: formData.techStack.split(',').map(s => s.trim()).filter(Boolean),
@@ -123,6 +125,7 @@ export default function Projects() {
       description: project.description || '',
       image: project.image || '',
       link: project.link || '#',
+      githubLink: project.githubLink || '#',
       typeBadge: project.typeBadge || '',
       isFeatured: project.isFeatured || false,
       techStack: project.techStack?.join(', ') || '',
@@ -135,7 +138,7 @@ export default function Projects() {
   const resetForm = () => {
     setEditingId(null);
     setFormData({
-      title: '', category: '', description: '', image: '', link: '#',
+      title: '', category: '', description: '', image: '', link: '#', githubLink: '#',
       techStack: '', typeBadge: '', isFeatured: false,
       statsUsers: '', statsRating: '', statsYear: ''
     });
@@ -224,6 +227,17 @@ export default function Projects() {
             <div>
               <label className="block text-sm font-medium text-slate-400 mb-1">Tech Stack (comma separated)</label>
               <input type="text" value={formData.techStack} onChange={e => setFormData({...formData, techStack: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white outline-none focus:border-blue-500" placeholder="React, Node, MongoDB" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Live Link</label>
+                <input type="text" value={formData.link} onChange={e => setFormData({...formData, link: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white outline-none focus:border-blue-500" placeholder="https://..." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-1">GitHub Link</label>
+                <input type="text" value={formData.githubLink} onChange={e => setFormData({...formData, githubLink: e.target.value})} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white outline-none focus:border-blue-500" placeholder="https://github.com/..." />
+              </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
