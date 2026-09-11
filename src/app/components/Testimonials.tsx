@@ -12,12 +12,12 @@ function ReviewCard({ review }: { review: any }) {
         background: "rgba(10,25,50,0.5)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        border: "1px solid rgba(0,170,255,0.15)",
+        border: "1px solid var(--primary-accent-glow)",
         boxShadow: "0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)",
       }}
     >
       {/* Quote icon */}
-      <Quote size={20} style={{ color: "#00aaff", opacity: 0.45, marginBottom: 12 }} />
+      <Quote size={20} style={{ color: "var(--primary-accent)", opacity: 0.45, marginBottom: 12 }} />
 
       {/* Stars */}
       <div className="flex gap-1 mb-3">
@@ -32,7 +32,7 @@ function ReviewCard({ review }: { review: any }) {
       </p>
 
       {/* Divider */}
-      <div className="h-px mb-4" style={{ background: "linear-gradient(90deg, rgba(0,170,255,0.2), transparent)" }} />
+      <div className="h-px mb-4" style={{ background: "linear-gradient(90deg, var(--primary-accent), transparent)" }} />
 
       {/* Author */}
       <div className="flex items-center gap-3">
@@ -40,7 +40,7 @@ function ReviewCard({ review }: { review: any }) {
           src={review.clientImage || review.img}
           alt={review.clientName || review.name}
           className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-          style={{ border: "1.5px solid rgba(0,170,255,0.3)" }}
+          style={{ border: "1.5px solid var(--primary-accent)" }}
         />
         <div>
           <p style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "15px", color: "#e8f4ff" }}>
@@ -111,13 +111,13 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-4" style={{ background: "rgba(0,170,255,0.08)", border: "1px solid rgba(0,170,255,0.2)", color: "#00aaff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
-            <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "#00d4ff" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.4 }} />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-4" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "var(--primary-accent)", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
+            <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--primary-accent)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.4 }} />
             Client Reviews
           </div>
           <h2 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 3rem)", color: "#e8f4ff" }}>
             What Our{" "}
-            <span style={{ background: "linear-gradient(90deg, #00aaff, #00d4ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span style={{ background: "var(--primary-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Clients Say
             </span>
           </h2>

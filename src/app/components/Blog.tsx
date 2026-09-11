@@ -30,14 +30,14 @@ export function Blog() {
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12 gap-4"
         >
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-4" style={{ background: "rgba(0,170,255,0.08)", border: "1px solid rgba(0,170,255,0.2)", color: "#00aaff", fontFamily: "JetBrains Mono, monospace" }}>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-4" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "var(--primary-accent)", fontFamily: "JetBrains Mono, monospace" }}>
               Insights
             </div>
             <h2 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 3rem)", color: "#e8f4ff" }}>
-              From the <span style={{ background: "linear-gradient(90deg, #00aaff, #00d4ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Blog</span>
+              From the <span style={{ background: "var(--primary-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Blog</span>
             </h2>
           </div>
-          <button className="flex items-center gap-2 text-sm" style={{ color: "#00aaff", fontFamily: "Inter, sans-serif" }}>
+          <button className="flex items-center gap-2 text-sm" style={{ color: "var(--primary-accent)", fontFamily: "Inter, sans-serif" }}>
             Visit Blog <ArrowRight size={14} />
           </button>
         </motion.div>
@@ -61,7 +61,7 @@ export function Blog() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className="group rounded-xl overflow-hidden cursor-pointer"
-                style={{ background: "#0a1628", border: "1px solid rgba(0,170,255,0.1)" }}
+                style={{ background: "#0a1628", border: "1px solid var(--primary-accent-glow)" }}
                 onClick={() => navigate(`/blog/${post._id}`)}
               >
                 <div className="relative h-44 overflow-hidden">

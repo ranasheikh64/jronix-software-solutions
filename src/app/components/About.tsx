@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "motion/react";
-import { Target, Zap, Users, Globe2, Award, Github, Linkedin, Twitter, ChevronRight } from "lucide-react";
+import { Target, Zap, Users, Globe2, Award, Github, Linkedin, Twitter, ChevronRight, Lightbulb, Cpu } from "lucide-react";
 import apiClient from "../../api/client";
 
 const iconMap: Record<string, any> = {
@@ -18,8 +18,8 @@ function TeamCard({ member, index }: { member: any; index: number }) {
   const my = useMotionValue(0);
   const rx = useSpring(useTransform(my, [-60, 60], [8, -8]), { stiffness: 280, damping: 28 });
   const ry = useSpring(useTransform(mx, [-60, 60], [-8, 8]), { stiffness: 280, damping: 28 });
-  
-  const colors = ["#00aaff", "#a78bfa", "#34d399", "#f472b6"];
+
+  const colors = ["var(--primary-accent)", "#a78bfa", "#34d399", "#f472b6"];
   const color = colors[index % colors.length];
 
   return (
@@ -43,7 +43,7 @@ function TeamCard({ member, index }: { member: any; index: number }) {
         animate={{
           boxShadow: hovered
             ? `0 20px 60px ${member.color}30, 0 0 0 1px ${member.color}45`
-            : "0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,170,255,0.07)",
+            : "0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px var(--primary-accent)",
         }}
         style2={{ background: "rgba(8,18,36,0.8)", backdropFilter: "blur(16px)" } as React.CSSProperties}
       >
@@ -67,10 +67,10 @@ function TeamCard({ member, index }: { member: any; index: number }) {
             style={{ background: `${color}18`, backdropFilter: "blur(2px)" }}
           >
             {[
-              { icon: Github, link: member.socialLinks?.github }, 
-              { icon: Linkedin, link: member.socialLinks?.linkedin }, 
+              { icon: Github, link: member.socialLinks?.github },
+              { icon: Linkedin, link: member.socialLinks?.linkedin },
               { icon: Twitter, link: member.socialLinks?.twitter }
-            ].map(({icon: Icon, link}, i) => link && link !== '#' ? (
+            ].map(({ icon: Icon, link }, i) => link && link !== '#' ? (
               <motion.a
                 key={i}
                 href={link}
@@ -122,9 +122,9 @@ function ValueCard({ v, i }: { v: any; i: number }) {
   const [hovered, setHovered] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-30px" });
-  
+
   const Icon = iconMap[v.icon?.toLowerCase()] || Target;
-  const colors = ["#00aaff", "#a78bfa", "#34d399", "#f472b6"];
+  const colors = ["var(--primary-accent)", "#a78bfa", "#34d399", "#f472b6"];
   const color = colors[i % colors.length];
 
   return (
@@ -138,7 +138,7 @@ function ValueCard({ v, i }: { v: any; i: number }) {
       className="relative flex gap-4 items-start p-5 rounded-2xl transition-all duration-300 cursor-default"
       style={{
         background: hovered ? `${color}0e` : "rgba(10,22,40,0.5)",
-        border: `1px solid ${hovered ? color + "35" : "rgba(0,170,255,0.08)"}`,
+        border: `1px solid ${hovered ? color + "35" : "var(--primary-accent-glow)"}`,
         backdropFilter: "blur(12px)",
         boxShadow: hovered ? `0 8px 32px ${color}18` : "none",
       }}
@@ -174,9 +174,16 @@ export function About() {
   const [journeyData, setJourneyData] = useState<any[]>([]);
   const [teamData, setTeamData] = useState<any[]>([]);
   const [techData, setTechData] = useState<any>(null);
-  
+
   const headingRef = useRef<HTMLDivElement>(null);
   const headingInView = useInView(headingRef, { once: true, margin: "-60px" });
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(e => console.error("Auto-play prevented", e));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -211,9 +218,9 @@ export function About() {
             initial={{ opacity: 0, y: 20 }}
             animate={headingInView ? { opacity: 1, y: 0 } : {}}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-5"
-            style={{ background: "rgba(0,170,255,0.08)", border: "1px solid rgba(0,170,255,0.2)", color: "#00aaff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.15)", color: "#ffffff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}
           >
-            <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "#00d4ff" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.4 }} />
+            <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "#ffffff" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.4 }} />
             {aboutData?.badge || "Who We Are"}
           </motion.div>
           <motion.h2
@@ -222,7 +229,7 @@ export function About() {
             transition={{ delay: 0.1 }}
             style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2.2rem, 4.5vw, 3.4rem)", color: "#e8f4ff", lineHeight: 1.15 }}
             dangerouslySetInnerHTML={{
-              __html: aboutData?.title || `Built by Builders, <span style="background: linear-gradient(90deg, #00aaff, #00d4ff, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">For Builders</span>`
+              __html: aboutData?.title || `Built by Builders, <span style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">For Builders</span>`
             }}
           />
           <motion.p
@@ -239,7 +246,7 @@ export function About() {
             animate={headingInView ? { scaleX: 1 } : {}}
             transition={{ duration: 0.9, delay: 0.3 }}
             className="mx-auto mt-5 h-px w-36"
-            style={{ background: "linear-gradient(90deg, transparent, #00aaff, #a78bfa, transparent)", transformOrigin: "center" }}
+            style={{ background: "linear-gradient(90deg, transparent, var(--primary-accent), #a78bfa, transparent)", transformOrigin: "center" }}
           />
         </div>
 
@@ -254,9 +261,13 @@ export function About() {
             className="relative"
           >
             <div className="relative rounded-2xl overflow-hidden" style={{ height: 380 }}>
-              <img
-                src={aboutData?.image || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=500&fit=crop&auto=format"}
-                alt="Jronix team collaborating"
+              <video
+                ref={videoRef}
+                src={`${import.meta.env.BASE_URL}A_professional_D_logo_animati.mp4`}
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(5,12,26,0.5) 0%, transparent 60%, rgba(5,12,26,0.4) 100%)" }} />
@@ -268,9 +279,9 @@ export function About() {
                   viewport={{ once: true }}
                   transition={{ delay: 0.5 }}
                   className="absolute bottom-4 left-4 px-4 py-3 rounded-xl"
-                  style={{ background: "rgba(5,12,26,0.85)", border: "1px solid rgba(0,170,255,0.25)", backdropFilter: "blur(12px)" }}
+                  style={{ background: "rgba(5,12,26,0.85)", border: "1px solid var(--primary-accent)", backdropFilter: "blur(12px)" }}
                 >
-                  <p style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "24px", color: "#00d4ff" }}>{aboutData.imageStats[0].value}</p>
+                  <p style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "24px", color: "var(--primary-accent)" }}>{aboutData.imageStats[0].value}</p>
                   <p className="text-xs" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>{aboutData.imageStats[0].label}</p>
                 </motion.div>
               )}
@@ -303,7 +314,7 @@ export function About() {
               )}
             </div>
             {/* Decorative corner accent */}
-            <div className="absolute -bottom-3 -right-3 w-24 h-24 rounded-2xl pointer-events-none" style={{ border: "1px solid rgba(0,170,255,0.15)", zIndex: -1 }} />
+            <div className="absolute -bottom-3 -right-3 w-24 h-24 rounded-2xl pointer-events-none" style={{ border: "1px solid var(--primary-accent-glow)", zIndex: -1 }} />
             <div className="absolute -top-3 -left-3 w-16 h-16 rounded-xl pointer-events-none" style={{ border: "1px solid rgba(167,139,250,0.15)", zIndex: -1 }} />
           </motion.div>
 
@@ -314,7 +325,7 @@ export function About() {
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-xs mb-2" style={{ color: "#00aaff", fontFamily: "JetBrains Mono, monospace" }}>{aboutData?.storyTitle || "// our story"}</p>
+            <p className="text-xs mb-2" style={{ color: "var(--primary-accent)", fontFamily: "JetBrains Mono, monospace" }}>{aboutData?.storyTitle || "// our story"}</p>
             <p className="text-base leading-relaxed mb-3" style={{ color: "#c8dff0", fontFamily: "Inter, sans-serif" }}>
               {aboutData?.storyDescription || "Jronix was born in Dhaka with one purpose — to build digital products that genuinely move the needle. We partner with startups and enterprises to design, build, and launch apps, platforms, and AI systems that users love."}
             </p>
@@ -329,49 +340,130 @@ export function About() {
         </div>
 
         {/* ── Timeline ── */}
-        <div className="mb-24">
+        <div className="mb-32">
           <motion.h3
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
-            style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(1.6rem, 3vw, 2.2rem)", color: "#e8f4ff" }}
+            className="text-center mb-16"
+            style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 3.5vw, 2.5rem)", color: "#ffffff" }}
           >
-            Our <span style={{ background: "linear-gradient(90deg, #00aaff, #00d4ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Journey</span>
+            Our <span style={{ color: "#3b82f6" }}>Journey</span>
           </motion.h3>
-          <div className="relative">
-            {/* Connecting line */}
+
+          {/* Desktop & Tablet Timeline */}
+          <div className="relative max-w-6xl mx-auto px-4 hidden md:block">
+            {/* Glowing Horizontal Line */}
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute top-6 left-0 right-0 h-px hidden lg:block"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(0,170,255,0.3), rgba(167,139,250,0.3), transparent)", transformOrigin: "left" }}
-            />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {journeyData.map((m, i) => (
-                <motion.div
-                  key={m.year}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.15 }}
-                  className="relative flex flex-col items-center text-center group cursor-default"
-                >
-                  {/* Dot */}
+              transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute top-[32px] left-0 right-0 h-[2px] bg-blue-500/20"
+              style={{ boxShadow: "0 0 15px 2px rgba(59, 130, 246, 0.3)", transformOrigin: "left" }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/80 to-transparent opacity-70" />
+            </motion.div>
+
+            <div className="grid grid-cols-4 gap-6 relative z-10">
+              {journeyData.slice(0, 4).map((m, i) => {
+                const icons = [Lightbulb, Users, Cpu, Globe2];
+                const Icon = icons[i % icons.length];
+                return (
                   <motion.div
-                    className="relative w-12 h-12 rounded-full flex items-center justify-center mb-4 z-10"
-                    style={{ background: "linear-gradient(135deg, rgba(0,119,204,0.3), rgba(0,212,255,0.2))", border: "1px solid rgba(0,170,255,0.35)", backdropFilter: "blur(8px)" }}
-                    whileHover={{ scale: 1.15 }}
+                    key={m.year}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15 }}
+                    className="flex flex-col items-center"
                   >
-                    <span style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 800, fontSize: "13px", color: "#00d4ff" }}>{m.year}</span>
-                    <motion.div className="absolute inset-0 rounded-full" initial={{ scale: 1, opacity: 0.4 }} whileHover={{ scale: 1.6, opacity: 0 }} transition={{ duration: 0.5 }} style={{ border: "1px solid rgba(0,170,255,0.5)" }} />
+                    {/* Circle Node */}
+                    <motion.div
+                      className="w-16 h-16 rounded-full flex items-center justify-center relative mb-4"
+                      style={{
+                        background: "rgba(15, 23, 42, 0.85)",
+                        border: "2px solid #3b82f6",
+                        boxShadow: "0 0 25px 2px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(59, 130, 246, 0.2)",
+                        backdropFilter: "blur(12px)"
+                      }}
+                      whileHover={{ scale: 1.05, boxShadow: "0 0 35px 5px rgba(59, 130, 246, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.3)" }}
+                    >
+                      <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "16px", color: "#ffffff" }}>{m.year}</span>
+                    </motion.div>
+
+                    {/* Vertical Connector */}
+                    <div className="w-px h-6 bg-blue-500/40 mb-2 relative" style={{ boxShadow: "0 0 8px rgba(59, 130, 246, 0.5)" }} />
+
+                    {/* Content Card */}
+                    <div
+                      className="w-full p-5 rounded-xl transition-colors duration-300 flex flex-col"
+                      style={{
+                        background: "rgba(15, 23, 42, 0.6)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                        backdropFilter: "blur(12px)",
+                        minHeight: "140px"
+                      }}
+                    >
+                      <div className="flex items-start justify-between mb-3 gap-2">
+                        <h4 className="font-semibold text-blue-400 text-sm leading-tight" style={{ fontFamily: "Inter, sans-serif" }}>
+                          {m.title || m.label}
+                        </h4>
+                        <Icon size={18} className="text-slate-400 shrink-0" strokeWidth={1.5} />
+                      </div>
+                      <p className="text-[13px] text-slate-300 leading-relaxed text-left" style={{ fontFamily: "Inter, sans-serif" }}>
+                        {m.description || m.desc}
+                      </p>
+                    </div>
                   </motion.div>
-                  <p style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "15px", color: "#e8f4ff" }}>{m.title || m.label}</p>
-                  <p className="text-xs mt-1 leading-relaxed" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>{m.description || m.desc}</p>
-                </motion.div>
-              ))}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Mobile Vertical Timeline */}
+          <div className="md:hidden relative px-6">
+            <div className="absolute top-0 bottom-0 left-[39px] w-[2px] bg-blue-500/20" style={{ boxShadow: "0 0 10px rgba(59, 130, 246, 0.3)" }} />
+            <div className="space-y-10 relative z-10">
+              {journeyData.slice(0, 4).map((m, i) => {
+                const icons = [Lightbulb, Users, Cpu, Globe2];
+                const Icon = icons[i % icons.length];
+                return (
+                  <motion.div
+                    key={m.year}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    className="flex gap-6"
+                  >
+                    <motion.div
+                      className="w-12 h-12 shrink-0 rounded-full flex items-center justify-center relative mt-2"
+                      style={{
+                        background: "rgba(15, 23, 42, 0.85)",
+                        border: "2px solid #3b82f6",
+                        boxShadow: "0 0 15px 1px rgba(59, 130, 246, 0.3)"
+                      }}
+                    >
+                      <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "12px", color: "#ffffff" }}>{m.year}</span>
+                    </motion.div>
+                    <div
+                      className="flex-1 p-5 rounded-xl border border-white/10"
+                      style={{ background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(12px)" }}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <h4 className="font-semibold text-blue-400 text-[15px]" style={{ fontFamily: "Inter, sans-serif" }}>
+                          {m.title || m.label}
+                        </h4>
+                        <Icon size={16} className="text-slate-400 shrink-0" />
+                      </div>
+                      <p className="text-[13px] text-slate-300 leading-relaxed text-left" style={{ fontFamily: "Inter, sans-serif" }}>
+                        {m.description || m.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -400,28 +492,29 @@ export function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="rounded-2xl p-8 text-center"
-          style={{ background: "rgba(8,18,36,0.6)", border: "1px solid rgba(0,170,255,0.1)", backdropFilter: "blur(16px)" }}
+          style={{ background: "rgba(8,18,36,0.6)", border: "1px solid var(--primary-accent-glow)", backdropFilter: "blur(16px)" }}
         >
-          <p className="text-xs mb-2" style={{ color: "#00aaff", fontFamily: "JetBrains Mono, monospace" }}>{techData?.badge || "// technologies we master"}</p>
+          <p className="text-xs mb-2" style={{ color: "var(--primary-accent)", fontFamily: "JetBrains Mono, monospace" }}>{techData?.badge || "// technologies we master"}</p>
           <h3 className="mb-6" style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "1.5rem", color: "#e8f4ff" }}>{techData?.title || "Our Tech Arsenal"}</h3>
           <div className="flex flex-wrap justify-center gap-3">
             {techData?.technologies?.map((tech: string, i: number) => {
               const colors = ["#54c5f8", "#61dafb", "#e8f4ff", "#ffd43b", "#009688", "#ffca28", "#21759b", "#f24e1e", "#ff9900", "#2496ed", "#336791", "#47a248"];
               const color = colors[i % colors.length];
               return (
-              <motion.span
-                key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
-                whileHover={{ scale: 1.12, y: -3 }}
-                className="px-4 py-2 rounded-xl text-sm cursor-default"
-                style={{ background: `${color}10`, border: `1px solid ${color}28`, color: color, fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}
-              >
-                {tech}
-              </motion.span>
-            )})}
+                <motion.span
+                  key={tech}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.04 }}
+                  whileHover={{ scale: 1.12, y: -3 }}
+                  className="px-4 py-2 rounded-xl text-sm cursor-default"
+                  style={{ background: `${color}10`, border: `1px solid ${color}28`, color: color, fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}
+                >
+                  {tech}
+                </motion.span>
+              )
+            })}
           </div>
         </motion.div>
 

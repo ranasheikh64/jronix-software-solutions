@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import { Github, Twitter, Linkedin, Instagram, ArrowUp, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";

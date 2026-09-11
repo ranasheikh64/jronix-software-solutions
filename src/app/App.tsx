@@ -11,19 +11,22 @@ import { Career } from "./components/Career";
 import { Blog } from "./components/Blog";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
+import { ProcessSection } from "./components/ProcessSection";
 import { SingleBlog } from "./pages/SingleBlog";
 import { SingleProject } from "./pages/SingleProject";
 import { AllProjects } from "./pages/AllProjects";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsConditions } from "./pages/TermsConditions";
+import { AllPositions } from "./pages/AllPositions";
 
 const Home = () => (
   <>
     <Hero />
-    <Services />
-    <Stats />
-    <Portfolio />
     <About />
+    <Portfolio />
+    <Services />
+    <ProcessSection />
+    <Stats />
     <Testimonials />
     <Career />
     <Blog />
@@ -32,14 +35,20 @@ const Home = () => (
 );
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(true);
-
   return (
-    <div style={{ minHeight: "100vh", background: "#010515", overflowX: "hidden", position: "relative" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#020617", overflowX: "hidden", position: "relative" }}>
+      
+      {/* Global Seamless Background Gradient */}
+      <div 
+        className="fixed inset-0 z-0 pointer-events-none" 
+        style={{
+          background: "radial-gradient(ellipse at top center, rgba(30, 58, 138, 0.02) 0%, transparent 60%), radial-gradient(circle at center, rgba(15, 23, 42, 0.2) 0%, #020617 100%)"
+        }} 
+      />
 
       {/* ── Page content ── */}
       <div style={{ position: "relative", zIndex: 2 }}>
-        <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjects />} />
@@ -47,6 +56,7 @@ export default function App() {
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/blog/:id" element={<SingleBlog />} />
           <Route path="/project/:id" element={<SingleProject />} />
+          <Route path="/open-positions" element={<AllPositions />} />
         </Routes>
         <Footer />
       </div>

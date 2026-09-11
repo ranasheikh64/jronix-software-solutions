@@ -28,7 +28,7 @@ export function SingleBlog() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00aaff]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-accent)]"></div>
       </div>
     );
   }
@@ -39,7 +39,7 @@ export function SingleBlog() {
         <h2 className="text-2xl font-bold mb-4" style={{ color: "#e8f4ff" }}>{error || "Blog not found"}</h2>
         <button 
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-[#00aaff] hover:underline"
+          className="flex items-center gap-2 text-[var(--primary-accent)] hover:underline"
         >
           <ArrowLeft size={16} /> Back to Home
         </button>
@@ -61,13 +61,13 @@ export function SingleBlog() {
     >
       <button 
         onClick={() => navigate("/")}
-        className="flex items-center gap-2 text-[#00aaff] hover:underline mb-8"
+        className="flex items-center gap-2 text-[var(--primary-accent)] hover:underline mb-8"
       >
         <ArrowLeft size={16} /> Back
       </button>
 
       <div className="mb-8">
-        <span className="px-3 py-1.5 rounded-full text-xs font-mono mb-6 inline-block" style={{ background: "rgba(0,170,255,0.1)", border: "1px solid rgba(0,170,255,0.2)", color: "#00aaff" }}>
+        <span className="px-3 py-1.5 rounded-full text-xs font-mono mb-6 inline-block" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "var(--primary-accent)" }}>
           {blog.category}
         </span>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: "Rajdhani, sans-serif", color: "#e8f4ff" }}>
@@ -76,7 +76,7 @@ export function SingleBlog() {
         
         <div className="flex items-center gap-6 mb-8 text-sm" style={{ color: "#7aa8cc" }}>
           <div className="flex items-center gap-3">
-            <img src={blog.authorImage} alt={blog.authorName} className="w-10 h-10 rounded-full object-cover border border-[#00aaff]/20" />
+            <img src={blog.authorImage} alt={blog.authorName} className="w-10 h-10 rounded-full object-cover border border-[var(--primary-accent)]/20" />
             <div className="flex flex-col">
               <span className="font-semibold text-white">{blog.authorName}</span>
               <span className="text-xs">{date}</span>
@@ -88,7 +88,7 @@ export function SingleBlog() {
         </div>
       </div>
 
-      <div className="relative h-64 md:h-96 w-full mb-12 rounded-2xl overflow-hidden border border-[#00aaff]/20">
+      <div className="relative h-64 md:h-96 w-full mb-12 rounded-2xl overflow-hidden border border-[var(--primary-accent)]/20">
         <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
       </div>
 

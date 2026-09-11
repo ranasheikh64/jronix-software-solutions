@@ -66,7 +66,7 @@ export function Stats() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-sm font-bold tracking-widest uppercase mb-3" 
-            style={{ color: "#00aaff" }}
+            style={{ color: "var(--primary-accent)" }}
           >
             By The Numbers
           </motion.h2>
@@ -96,7 +96,7 @@ export function Stats() {
             {/* We duplicate the stats array 4 times to ensure it overflows the screen for seamless loop */}
             {[...statsData, ...statsData, ...statsData, ...statsData].map((stat, index) => {
               const Icon = iconMap[stat.icon?.toLowerCase()] || CheckCircle;
-              const colors = ["#00aaff", "#00d4ff", "#a78bfa", "#34d399", "#f43f5e"];
+              const colors = ["var(--primary-accent)", "var(--primary-accent)", "#a78bfa", "#34d399", "#f43f5e"];
               const i = index % statsData.length;
               const color = colors[i % colors.length];
               

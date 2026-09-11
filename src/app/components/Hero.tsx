@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { ArrowDown, Play, Smartphone, Globe, Brain, Pen, Flame, Zap, Cloud, Container } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
+import heroBgImg from "../../imports/hero_circuit_bg.png";
 import apiClient from "../../api/client";
 
 const techIcons = [
@@ -34,12 +35,12 @@ export function Hero() {
     fetchHeroData();
   }, []);
 
-  const typewriterWords = (heroData?.titles?.length > 0) ? heroData.titles : ["Digital Products", "Mobile Apps", "Web Platforms", "AI Solutions"];
+  const typewriterWords = (heroData?.titles?.length > 0) ? heroData.titles.map((t: string) => t.replace(/^We Build /i, '')) : ["Digital Products", "Mobile Apps", "Web Platforms", "AI Solutions"];
 
   useEffect(() => {
     const word = typewriterWords[wordIndex];
     if (!word) return;
-    
+
     let timeout: ReturnType<typeof setTimeout>;
     if (!deleting && displayed.length < word.length) {
       timeout = setTimeout(() => setDisplayed(word.slice(0, displayed.length + 1)), 80);
@@ -62,8 +63,20 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative min-h-screen flex items-center overflow-hidden bg-black"
     >
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 z-0 opacity-100"
+        style={{
+          backgroundImage: `url(${heroBgImg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 z-0 bg-black/90" />
 
       <div className="max-w-7xl mx-auto px-6 pt-28 pb-16 w-full relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -74,16 +87,17 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-6" style={{ background: "rgba(0,170,255,0.1)", border: "1px solid rgba(0,170,255,0.25)", color: "#00aaff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
-              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00d4ff" }} />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-6" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "#fff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--primary-accent)" }} />
               {heroData?.badge || "Software Solutions"}
             </div>
 
             <h1 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2.4rem, 5vw, 4rem)", lineHeight: 1.15, color: "#e8f4ff" }}>
-              {heroData?.title || "We Build"}{" "}
-              <span style={{ background: "linear-gradient(90deg, #00aaff, #00d4ff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              {heroData?.title || "We Build"}
+              <br />
+              <span style={{ background: "var(--primary-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 {displayed}
-                <span className="animate-pulse" style={{ WebkitTextFillColor: "#00aaff" }}>|</span>
+                <span className="animate-pulse" style={{ WebkitTextFillColor: "var(--primary-accent)" }}>|</span>
               </span>
               <br />{heroData?.subtitle || "That Matter"}
             </h1>
@@ -96,34 +110,34 @@ export function Hero() {
               <button
                 onClick={() => scrollTo(heroData?.primaryButtonLink || "work")}
                 className="px-7 py-3 rounded-lg text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #0077cc, #00d4ff)", color: "#fff", fontFamily: "Inter, sans-serif" }}
+                style={{ background: "var(--primary-gradient)", color: "#fff", fontFamily: "Inter, sans-serif" }}
               >
                 {heroData?.primaryButtonText || "View Our Work"}
               </button>
               <button
                 onClick={() => scrollTo(heroData?.secondaryButtonLink || "contact")}
                 className="flex items-center gap-2 px-7 py-3 rounded-lg text-sm transition-all duration-200 hover:bg-white/5"
-                style={{ border: "1px solid rgba(0,170,255,0.4)", color: "#00aaff", fontFamily: "Inter, sans-serif", backdropFilter: "blur(8px)" }}
+                style={{ border: "1px solid var(--primary-accent)", color: "var(--primary-accent)", fontFamily: "Inter, sans-serif", backdropFilter: "blur(8px)" }}
               >
                 <Play size={14} fill="currentColor" /> {heroData?.secondaryButtonText || "Talk to Us"}
               </button>
             </div>
 
-            {/* Tech stack */}
             <div className="mt-12">
-              <p className="text-xs mb-3" style={{ color: "#7aa8cc", fontFamily: "JetBrains Mono, monospace" }}>// tech we use</p>
+              {/* <p className="text-xs mb-3" style={{ color: "#7aa8cc", fontFamily: "JetBrains Mono, monospace" }}>// tech we use</p> */}
               <div className="flex flex-wrap gap-3">
                 {techIcons.map((t) => (
                   <span
                     key={t.name}
                     className="px-3 py-1.5 rounded text-xs transition-all duration-200 hover:scale-105"
-                    style={{ background: "rgba(0,170,255,0.06)", border: "1px solid rgba(0,170,255,0.12)", color: t.color, fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(6px)" }}
+                    style={{ background: "var(--primary-accent)", border: "1px solid var(--primary-accent)", color: "#fff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(6px)" }}
                   >
                     {t.name}
                   </span>
                 ))}
               </div>
-            </div>
+            </div>   {/* Tech stack */}
+
           </motion.div>
 
           {/* Right: Logo orbital */}
@@ -134,14 +148,14 @@ export function Hero() {
             className="hidden lg:flex justify-center items-center"
           >
             <div className="relative w-[440px] h-[440px] flex items-center justify-center">
-              <motion.div className="absolute inset-0 rounded-full" style={{ border: "2px dashed rgba(0,170,255,0.45)" }} animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 24, ease: "linear" }} />
-              <motion.div className="absolute inset-12 rounded-full" style={{ border: "2px solid rgba(0,170,255,0.3)" }} animate={{ rotate: -360 }} transition={{ repeat: Infinity, duration: 16, ease: "linear" }} />
+              <motion.div className="absolute inset-0 rounded-full" style={{ border: "2px dashed var(--primary-accent)" }} animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 24, ease: "linear" }} />
+              <motion.div className="absolute inset-12 rounded-full" style={{ border: "2px solid var(--primary-accent)" }} animate={{ rotate: -360 }} transition={{ repeat: Infinity, duration: 16, ease: "linear" }} />
               <motion.div className="absolute inset-20 rounded-full" style={{ border: "2px dashed rgba(0,212,255,0.25)" }} animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 10, ease: "linear" }} />
 
               <motion.div
                 className="relative z-10 rounded-full overflow-hidden"
-                style={{ width: 180, height: 180, border: "2px solid rgba(0,170,255,0.3)", backdropFilter: "blur(20px)", background: "rgba(1,5,21,0.5)" }}
-                animate={{ boxShadow: ["0 0 40px rgba(0,170,255,0.2)", "0 0 80px rgba(0,212,255,0.35)", "0 0 40px rgba(0,170,255,0.2)"] }}
+                style={{ width: 180, height: 180, border: "2px solid var(--primary-accent)", backdropFilter: "blur(20px)", background: "rgba(1,5,21,0.5)" }}
+                animate={{ boxShadow: ["0 0 40px var(--primary-accent)", "0 0 80px rgba(0,212,255,0.35)", "0 0 40px var(--primary-accent)"] }}
                 transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
               >
                 <ImageWithFallback src={logoImg} alt="Jronix Software Solutions" className="w-full h-full object-contain" />
@@ -150,10 +164,10 @@ export function Hero() {
               {/* Outer orbit — clockwise, text always upright */}
               {[
                 { label: "Flutter", color: "#54c5f8", Icon: Smartphone },
-                { label: "React",   color: "#61dafb", Icon: Globe },
-                { label: "Python",  color: "#ffd43b", Icon: Brain },
-                { label: "Figma",   color: "#f24e1e", Icon: Pen },
-                { label: "Firebase",color: "#ffca28", Icon: Flame },
+                { label: "React", color: "#61dafb", Icon: Globe },
+                { label: "Python", color: "#ffd43b", Icon: Brain },
+                { label: "Figma", color: "#f24e1e", Icon: Pen },
+                { label: "Firebase", color: "#ffca28", Icon: Flame },
               ].map((tech, i, arr) => {
                 const startDeg = (i / arr.length) * 360;
                 const STEPS = 72;
@@ -201,8 +215,8 @@ export function Hero() {
               {[
                 { label: "Next.js", color: "#e8f4ff", Icon: Zap },
                 { label: "FastAPI", color: "#009688", Icon: Zap },
-                { label: "AWS",     color: "#ff9900", Icon: Cloud },
-                { label: "Docker",  color: "#2496ed", Icon: Container },
+                { label: "AWS", color: "#ff9900", Icon: Cloud },
+                { label: "Docker", color: "#2496ed", Icon: Container },
               ].map((tech, i, arr) => {
                 const startDeg = (i / arr.length) * 360 + 45;
                 const STEPS = 72;
