@@ -111,20 +111,38 @@ export function Testimonials() {
           viewport={{ once: true }}
           className="text-center mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-4" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "var(--primary-accent)", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
-            <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--primary-accent)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.4 }} />
-            Client Reviews
+          {/* Badge */}
+          <div className="inline-flex items-center justify-center gap-3 mb-8">
+            <div className="h-[1px] w-12 opacity-60" style={{ background: "linear-gradient(to right, transparent, var(--primary-accent))" }} />
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase px-5 py-2 rounded-full"
+              style={{ color: "var(--primary-accent)", fontFamily: "Inter, sans-serif", background: "rgba(59,130,246,0.07)", border: "1px solid rgba(59,130,246,0.2)" }}>
+              <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--primary-accent)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.4 }} />
+              Client Reviews
+            </span>
+            <div className="h-[1px] w-12 opacity-60" style={{ background: "linear-gradient(to left, transparent, var(--primary-accent))" }} />
           </div>
-          <h2 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 3rem)", color: "#e8f4ff" }}>
-            What Our{" "}
-            <span style={{ background: "var(--primary-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+
+          <h2 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2.4rem, 5vw, 4rem)", lineHeight: 1.08, letterSpacing: "-0.025em" }}>
+            <span style={{ color: "#e8f4ff" }}>What Our </span>
+            <span style={{ background: "linear-gradient(135deg, var(--primary-accent) 0%, #a78bfa 60%, #f472b6 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 25px rgba(59,130,246,0.4))" }}>
               Clients Say
             </span>
           </h2>
-          <p className="mt-3 text-sm max-w-md mx-auto" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto mt-5 mb-5 h-[2px] w-24 rounded-full"
+            style={{ background: "linear-gradient(90deg, transparent, var(--primary-accent), #a78bfa, transparent)", transformOrigin: "center" }}
+          />
+
+          <p className="text-sm max-w-md mx-auto" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
             Real words from real clients across the globe.
           </p>
         </motion.div>
+
       </div>
 
       {/* Reviews Display */}

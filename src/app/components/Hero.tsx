@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import { ArrowDown, Play, Smartphone, Globe, Brain, Pen, Flame, Zap, Cloud, Container } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
-import heroBgImg from "../../imports/hero_circuit_bg.png";
+import heroBgImg from "../../imports/hero_bg_new.png";
 import apiClient from "../../api/client";
 
 const techIcons = [
@@ -76,7 +76,7 @@ export function Hero() {
         }}
       />
       {/* Dark Overlay */}
-      <div className="absolute inset-0 z-0 bg-black/90" />
+      <div className="absolute inset-0 z-0 bg-[#020617]/75" />
 
       <div className="max-w-7xl mx-auto px-6 pt-28 pb-16 w-full relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -266,16 +266,35 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <motion.button
-        onClick={() => scrollTo("services")}
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
-        style={{ color: "#7aa8cc" }}
+      <motion.div 
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 1 }}
       >
-        <span className="text-xs" style={{ fontFamily: "JetBrains Mono, monospace" }}>scroll</span>
-        <ArrowDown size={16} />
-      </motion.button>
+        <button
+          onClick={() => scrollTo("services")}
+          className="group flex flex-col items-center gap-3 focus:outline-none"
+        >
+          <div 
+            className="w-[22px] h-[36px] rounded-full flex justify-center p-1 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+            style={{ border: "2px solid rgba(122,168,204,0.3)", backgroundColor: "rgba(5,12,26,0.5)", backdropFilter: "blur(4px)" }}
+          >
+            <motion.div 
+              className="w-1 h-1.5 rounded-full"
+              style={{ background: "var(--primary-accent)" }}
+              animate={{ y: [0, 14, 0], opacity: [1, 0.2, 1] }}
+              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+            />
+          </div>
+          <span 
+            className="text-[9px] font-bold uppercase tracking-[0.3em] transition-colors duration-300 group-hover:text-white" 
+            style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}
+          >
+            Scroll
+          </span>
+        </button>
+      </motion.div>
     </section>
   );
 }

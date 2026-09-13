@@ -60,26 +60,46 @@ export function Stats() {
     <section id="stats" className="py-20 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative px-6">
         
+        {/* Header */}
         <div className="text-center mb-16">
-          <motion.h2 
-            initial={{ opacity: 0, y: -20 }}
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-sm font-bold tracking-widest uppercase mb-3" 
-            style={{ color: "var(--primary-accent)" }}
+            className="inline-flex items-center justify-center gap-3 mb-8"
           >
-            By The Numbers
-          </motion.h2>
-          <motion.h3 
-            initial={{ opacity: 0, y: 20 }}
+            <div className="h-[1px] w-12 opacity-60" style={{ background: "linear-gradient(to right, transparent, var(--primary-accent))" }} />
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase px-5 py-2 rounded-full"
+              style={{ color: "var(--primary-accent)", fontFamily: "Inter, sans-serif", background: "rgba(59,130,246,0.07)", border: "1px solid rgba(59,130,246,0.2)" }}>
+              <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--primary-accent)" }} animate={{ opacity: [1, 0.3, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} />
+              By The Numbers
+            </span>
+            <div className="h-[1px] w-12 opacity-60" style={{ background: "linear-gradient(to left, transparent, var(--primary-accent))" }} />
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-bold text-white mb-6"
-            style={{ fontFamily: "Rajdhani, sans-serif" }}
+            style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2.4rem, 5vw, 4rem)", lineHeight: 1.08, letterSpacing: "-0.025em" }}
           >
-            Delivering Impact at Scale
-          </motion.h3>
+            <span style={{ color: "#e8f4ff" }}>Delivering </span>
+            <span style={{ background: "linear-gradient(135deg, var(--primary-accent) 0%, #a78bfa 60%, #f472b6 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", filter: "drop-shadow(0 0 25px rgba(59,130,246,0.4))" }}>
+              Impact
+            </span>
+            <span style={{ color: "#e8f4ff" }}> at Scale</span>
+          </motion.h2>
+
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            whileInView={{ scaleX: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto mt-5 h-[2px] w-24 rounded-full"
+            style={{ background: "linear-gradient(90deg, transparent, var(--primary-accent), #a78bfa, transparent)", transformOrigin: "center" }}
+          />
         </div>
 
         <div className="relative z-10 w-full overflow-hidden" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>

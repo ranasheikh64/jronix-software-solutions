@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
 
-const navLinks = ["Home", "Services", "Work", "About", "Blog", "Career", "Contact"];
+const navLinks = ["Home", "About", "Work", "Services", "Career", "Blog", "Contact"];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,9 +26,11 @@ export function Navbar() {
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? "rgba(5, 12, 26, 0.95)" : "transparent",
-        backdropFilter: scrolled ? "blur(12px)" : "none",
-        borderBottom: scrolled ? "1px solid var(--primary-accent-glow)" : "none",
+        background: scrolled ? "rgba(5, 12, 26, 0.65)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(59, 130, 246, 0.15)" : "1px solid transparent",
+        boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.2)" : "none"
       }}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -45,16 +47,16 @@ export function Navbar() {
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-2 bg-[rgba(255,255,255,0.02)] p-1.5 rounded-full border border-[rgba(255,255,255,0.05)]">
           {navLinks.map((link) => (
             <button
               key={link}
               onClick={() => scrollTo(link)}
-              className="relative text-sm transition-colors duration-200 group"
+              className="relative text-sm px-4 py-2 rounded-full transition-all duration-300 group hover:bg-[rgba(59,130,246,0.1)]"
               style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}
             >
-              <span className="group-hover:text-white transition-colors">{link}</span>
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300" style={{ background: "var(--primary-gradient)" }} />
+              <span className="group-hover:text-white transition-colors relative z-10">{link}</span>
+              <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "inset 0 0 10px rgba(59,130,246,0.2)" }} />
             </button>
           ))}
         </nav>
@@ -62,13 +64,18 @@ export function Navbar() {
         {/* Right Controls */}
         <div className="flex items-center gap-3">
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            animate={{ boxShadow: ["0 0 0px rgba(59,130,246,0)", "0 0 20px rgba(59,130,246,0.4)", "0 0 0px rgba(59,130,246,0)"] }}
+            transition={{ boxShadow: { repeat: Infinity, duration: 2 } }}
             onClick={() => scrollTo("contact")}
-            className="hidden sm:flex items-center gap-2 px-5 py-2 rounded-lg text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
-            style={{ background: "var(--primary-gradient)", color: "#fff", fontFamily: "Inter, sans-serif" }}
+            className="hidden sm:flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 relative overflow-hidden group"
+            style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)", color: "#fff", fontFamily: "Inter, sans-serif" }}
           >
-            Get a Quote
-          </button>
+            <span className="relative z-10">Get a Quote</span>
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(135deg, #6366f1, #3b82f6)" }} />
+          </motion.button>
           <button className="lg:hidden p-2" style={{ color: "#7aa8cc" }} onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>

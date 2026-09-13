@@ -54,6 +54,7 @@ export default function App() {
           <Route path="/projects" element={<AllProjects />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route path="/terms-of-service" element={<TermsConditions />} />
           <Route path="/blog/:id" element={<SingleBlog />} />
           <Route path="/project/:id" element={<SingleProject />} />
           <Route path="/open-positions" element={<AllPositions />} />
