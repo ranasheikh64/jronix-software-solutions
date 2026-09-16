@@ -123,7 +123,7 @@ export function Contact() {
   ];
 
   return (
-    <section id="contact" className="py-32 relative overflow-hidden">
+    <section id="contact" className="py-10 md:py-16 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, #050b14 0%, #070f1a 100%)" }} />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none opacity-[0.07] rounded-full blur-[120px]"
@@ -134,7 +134,7 @@ export function Contact() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* Header */}
-        <div ref={headingRef} className="text-center mb-16">
+        <div ref={headingRef} className="text-center mb-8 md:mb-10">
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={headingInView ? { opacity: 1, y: 0 } : {}}
             className="inline-flex items-center justify-center gap-3 mb-8"

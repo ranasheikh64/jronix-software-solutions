@@ -162,7 +162,7 @@ export function Blog() {
   if (!loading && postsData.length === 0) return null;
 
   return (
-    <section id="blog" className="py-24 relative overflow-hidden">
+    <section id="blog" className="py-10 md:py-16 relative overflow-hidden">
       {/* Background blobs */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] pointer-events-none opacity-[0.06] rounded-full blur-[120px]"
         style={{ background: "radial-gradient(circle, #3b82f6, transparent 70%)" }} />
@@ -170,7 +170,7 @@ export function Blog() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* Header */}
-        <div ref={headingRef} className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-14 gap-6">
+        <div ref={headingRef} className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-8 md:mb-10 gap-6">
           <div>
             {/* Badge */}
             <motion.div

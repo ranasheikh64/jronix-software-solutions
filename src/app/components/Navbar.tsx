@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useNavigate, useLocation } from "react-router";
+import { Menu, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
@@ -9,6 +10,8 @@ const navLinks = ["Home", "About", "Work", "Services", "Career", "Blog", "Contac
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -18,8 +21,30 @@ export function Navbar() {
 
   const scrollTo = (id: string) => {
     setMobileOpen(false);
-    const el = document.getElementById(id.toLowerCase());
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    const targetId = id.toLowerCase();
+
+    const doScroll = () => {
+      if (targetId === "home") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      const el = document.getElementById(targetId);
+      if (el) {
+        const navHeight = 75;
+        const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+        window.scrollTo({
+          top: Math.max(0, top),
+          behavior: "smooth"
+        });
+      }
+    };
+
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(doScroll, 250);
+    } else {
+      setTimeout(doScroll, 80);
+    }
   };
 
   return (
@@ -90,23 +115,39 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden overflow-hidden"
-            style={{ background: "rgba(5, 12, 26, 0.98)", borderBottom: "1px solid var(--primary-accent-glow)" }}
+            style={{
+              background: "rgba(5, 12, 26, 0.98)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              borderBottom: "1px solid rgba(59, 130, 246, 0.2)"
+            }}
           >
-            <div className="px-6 py-4 flex flex-col gap-4">
+            <div className="px-6 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
                 <button
                   key={link}
+                  type="button"
                   onClick={() => scrollTo(link)}
-                  className="text-left py-2 border-b text-sm transition-colors hover:text-white"
-                  style={{ color: "#7aa8cc", borderColor: "var(--primary-accent-glow)", fontFamily: "Inter, sans-serif" }}
+                  className="w-full text-left py-3 px-2 border-b text-sm font-medium transition-all flex items-center justify-between active:bg-blue-500/15 active:text-white rounded-lg"
+                  style={{
+                    color: "#a8c4dd",
+                    borderColor: "rgba(59, 130, 246, 0.12)",
+                    fontFamily: "Inter, sans-serif"
+                  }}
                 >
-                  {link}
+                  <span>{link}</span>
+                  <ChevronRight size={15} className="opacity-40" />
                 </button>
               ))}
               <button
+                type="button"
                 onClick={() => scrollTo("contact")}
-                className="mt-2 px-5 py-2.5 rounded-lg text-sm text-center"
-                style={{ background: "var(--primary-gradient)", color: "#fff" }}
+                className="mt-3 w-full py-3 rounded-xl text-sm font-bold text-center transition-transform active:scale-95 shadow-lg"
+                style={{
+                  background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                  color: "#fff",
+                  fontFamily: "Inter, sans-serif"
+                }}
               >
                 Get a Quote
               </button>

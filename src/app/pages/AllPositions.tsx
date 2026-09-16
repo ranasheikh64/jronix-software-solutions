@@ -55,7 +55,7 @@ export function AllPositions() {
             <div className="w-10 h-10 border-2 border-[var(--primary-accent)] border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {jobs.map((job, i) => (
               <JobCard key={job._id || job.title} job={job} index={i} onApply={setApplyJob} />
             ))}

@@ -63,7 +63,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden bg-black"
+      className="relative lg:min-h-screen lg:flex lg:items-center overflow-hidden bg-black"
     >
       {/* Background Image */}
       <div
@@ -78,7 +78,7 @@ export function Hero() {
       {/* Dark Overlay */}
       <div className="absolute inset-0 z-0 bg-[#020617]/75" />
 
-      <div className="max-w-7xl mx-auto px-6 pt-28 pb-16 w-full relative z-10">
+      <div className="max-w-7xl mx-auto px-6 pt-28 sm:pt-32 pb-8 md:pb-12 w-full relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
           {/* Left: Text */}
@@ -87,12 +87,12 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-6" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "#fff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs mb-4 sm:mb-6" style={{ background: "var(--primary-accent-glow)", border: "1px solid var(--primary-accent)", color: "#fff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(8px)" }}>
               <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--primary-accent)" }} />
               {heroData?.badge || "Software Solutions"}
             </div>
 
-            <h1 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2.4rem, 5vw, 4rem)", lineHeight: 1.15, color: "#e8f4ff" }}>
+            <h1 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(1.75rem, 3.8vw, 3.55rem)", lineHeight: 1.15, color: "#e8f4ff" }}>
               {heroData?.title || "We Build"}
               <br />
               <span style={{ background: "var(--primary-gradient)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -102,34 +102,34 @@ export function Hero() {
               <br />{heroData?.subtitle || "That Matter"}
             </h1>
 
-            <p className="mt-6 text-base leading-relaxed max-w-lg" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+            <p className="mt-3.5 sm:mt-6 text-[13px] sm:text-[15px] leading-relaxed max-w-lg" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
               {heroData?.description || "From idea to launch — we craft high-performance apps, platforms, and AI systems that drive real business impact."}
             </p>
 
-            <div className="flex flex-wrap gap-4 mt-8">
+            <div className="flex flex-wrap gap-3 sm:gap-4 mt-5 sm:mt-8">
               <button
                 onClick={() => scrollTo(heroData?.primaryButtonLink || "work")}
-                className="px-7 py-3 rounded-lg text-sm transition-all duration-200 hover:opacity-90 active:scale-95"
+                className="px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-90 active:scale-95"
                 style={{ background: "var(--primary-gradient)", color: "#fff", fontFamily: "Inter, sans-serif" }}
               >
                 {heroData?.primaryButtonText || "View Our Work"}
               </button>
               <button
                 onClick={() => scrollTo(heroData?.secondaryButtonLink || "contact")}
-                className="flex items-center gap-2 px-7 py-3 rounded-lg text-sm transition-all duration-200 hover:bg-white/5"
+                className="flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 hover:bg-white/5"
                 style={{ border: "1px solid var(--primary-accent)", color: "var(--primary-accent)", fontFamily: "Inter, sans-serif", backdropFilter: "blur(8px)" }}
               >
-                <Play size={14} fill="currentColor" /> {heroData?.secondaryButtonText || "Talk to Us"}
+                <Play size={13} fill="currentColor" /> {heroData?.secondaryButtonText || "Talk to Us"}
               </button>
             </div>
 
-            <div className="mt-12">
+            <div className="mt-6 sm:mt-12">
               {/* <p className="text-xs mb-3" style={{ color: "#7aa8cc", fontFamily: "JetBrains Mono, monospace" }}>// tech we use</p> */}
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 {techIcons.map((t) => (
                   <span
                     key={t.name}
-                    className="px-3 py-1.5 rounded text-xs transition-all duration-200 hover:scale-105"
+                    className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs transition-all duration-200 hover:scale-105"
                     style={{ background: "var(--primary-accent)", border: "1px solid var(--primary-accent)", color: "#fff", fontFamily: "JetBrains Mono, monospace", backdropFilter: "blur(6px)" }}
                   >
                     {t.name}
@@ -267,7 +267,7 @@ export function Hero() {
 
       {/* Scroll indicator */}
       <motion.div 
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center z-10"
+        className="hidden sm:flex absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex-col items-center z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}

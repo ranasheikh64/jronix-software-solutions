@@ -101,7 +101,7 @@ export function Testimonials() {
   const totalWidth = reviewsData.length * (360 + 20);
 
   return (
-    <section id="testimonials" className="py-24 relative overflow-hidden">
+    <section id="testimonials" className="py-10 md:py-16 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Heading */}
@@ -109,7 +109,7 @@ export function Testimonials() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-14"
+          className="text-center mb-6 md:mb-8"
         >
           {/* Badge */}
           <div className="inline-flex items-center justify-center gap-3 mb-8">

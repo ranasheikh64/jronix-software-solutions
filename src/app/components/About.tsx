@@ -198,36 +198,43 @@ function ValueCard({ v, i }: { v: any; i: number }) {
       transition={{ duration: 0.55, delay: i * 0.1 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex gap-4 items-start p-5 rounded-2xl transition-all duration-300 cursor-default"
+      className="relative flex flex-col sm:flex-row gap-4 sm:items-start p-5 rounded-2xl transition-all duration-500 cursor-default group overflow-hidden"
       style={{
-        background: hovered ? `${color}0e` : "rgba(10,22,40,0.5)",
-        border: `1px solid ${hovered ? color + "35" : "var(--primary-accent-glow)"}`,
-        backdropFilter: "blur(12px)",
-        boxShadow: hovered ? `0 8px 32px ${color}18` : "none",
+        background: hovered ? `linear-gradient(135deg, rgba(15,28,48,0.7) 0%, ${color}0a 100%)` : "rgba(10,22,40,0.5)",
+        border: `1px solid ${hovered ? color + "40" : "rgba(255,255,255,0.06)"}`,
+        backdropFilter: "blur(16px)",
+        boxShadow: hovered ? `0 12px 40px -10px ${color}25, inset 0 0 20px ${color}05` : "0 4px 20px -10px rgba(0,0,0,0.3)",
       }}
     >
+      {/* Background glow on hover */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" 
+        style={{ background: `radial-gradient(circle at 100% 0%, ${color}15 0%, transparent 70%)` }} 
+      />
+
       <motion.div
-        className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-        style={{ background: `${color}18`, border: `1px solid ${color}30` }}
-        animate={{ scale: hovered ? 1.1 : 1, rotate: hovered ? 5 : 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 relative z-10"
+        style={{ 
+          background: hovered ? `${color}15` : "rgba(255,255,255,0.03)", 
+          border: `1px solid ${hovered ? color + "30" : "rgba(255,255,255,0.05)"}`
+        }}
+        animate={{ scale: hovered ? 1.08 : 1, rotate: hovered ? 5 : 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
       >
-        <Icon size={20} style={{ color: color }} />
+        <Icon size={22} style={{ color: hovered ? color : "#8eaac2", transition: "color 0.3s ease" }} />
       </motion.div>
-      <div>
-        <p style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "16px", color: "#e8f4ff" }}>{v.title || v.label}</p>
-        <p className="text-sm mt-0.5" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>{v.description || v.desc}</p>
+      <div className="relative z-10">
+        <h4 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "18px", color: hovered ? "#ffffff" : "#e8f4ff", transition: "color 0.3s ease" }}>
+          {v.title || v.label}
+        </h4>
+        <p className="text-sm mt-1 leading-relaxed" style={{ color: "#8eaac2", fontFamily: "Inter, sans-serif" }}>
+          {v.description || v.desc}
+        </p>
       </div>
-      {hovered && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute top-3 right-3"
-          style={{ color: color }}
-        >
-          <ChevronRight size={14} />
-        </motion.div>
-      )}
+      
+      {/* Animated subtle corner accent */}
+      <div className="absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0"
+           style={{ background: `radial-gradient(circle at top right, ${color}30, transparent 70%)` }} />
     </motion.div>
   );
 }
@@ -269,14 +276,14 @@ export function About() {
   }, []);
 
   return (
-    <section id="about" className="py-28 relative overflow-hidden">
+    <section id="about" className="py-10 md:py-16 relative overflow-hidden">
       {/* Subtle section overlay */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(5,12,26,0.3) 0%, rgba(5,12,26,0.6) 50%, rgba(5,12,26,0.3) 100%)" }} />
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* ── Heading ── */}
-        <div ref={headingRef} className="text-center mb-20">
+        <div ref={headingRef} className="text-center mb-10 md:mb-14">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={headingInView ? { opacity: 1, y: 0 } : {}}
@@ -318,7 +325,7 @@ export function About() {
         </div>
 
         {/* ── Story + Values ── */}
-        <div className="grid lg:grid-cols-2 gap-14 items-center mb-24">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center mb-12 md:mb-16">
           {/* Left — image with layered card feel */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -400,19 +407,19 @@ export function About() {
               {aboutData?.mission || "Our mission: deliver world-class software with transparency, speed, and care. Every line of code we write is a commitment to your growth."}
             </p>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
               {aboutData?.features?.map((v: any, i: number) => <ValueCard key={v.title} v={v} i={i} />)}
             </div>
           </motion.div>
         </div>
 
         {/* ── Timeline ── */}
-        <div className="mb-32">
+        <div className="mb-12 md:mb-16">
           <motion.h3
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-8 md:mb-12"
             style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 3.5vw, 2.5rem)", color: "#ffffff" }}
           >
             Our <span style={{ color: "#3b82f6" }}>Journey</span>
@@ -490,9 +497,9 @@ export function About() {
           </div>
 
           {/* Mobile Vertical Timeline */}
-          <div className="md:hidden relative px-6">
-            <div className="absolute top-0 bottom-0 left-[39px] w-[2px] bg-blue-500/20" style={{ boxShadow: "0 0 10px rgba(59, 130, 246, 0.3)" }} />
-            <div className="space-y-10 relative z-10">
+          <div className="md:hidden relative px-4 mt-4">
+            <div className="absolute top-0 bottom-0 left-[39px] w-[2px] bg-gradient-to-b from-transparent via-blue-500/40 to-transparent" style={{ boxShadow: "0 0 15px rgba(59, 130, 246, 0.3)" }} />
+            <div className="space-y-8 relative z-10">
               {journeyData.slice(0, 4).map((m, i) => {
                 const icons = [Lightbulb, Users, Cpu, Globe2];
                 const Icon = icons[i % icons.length];
@@ -502,29 +509,38 @@ export function About() {
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    className="flex gap-6"
+                    className="flex gap-5 relative"
                   >
                     <motion.div
-                      className="w-12 h-12 shrink-0 rounded-full flex items-center justify-center relative mt-2"
+                      className="w-12 h-12 shrink-0 rounded-full flex items-center justify-center relative mt-1"
                       style={{
-                        background: "rgba(15, 23, 42, 0.85)",
-                        border: "2px solid #3b82f6",
-                        boxShadow: "0 0 15px 1px rgba(59, 130, 246, 0.3)"
+                        background: "linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 58, 138, 0.2))",
+                        border: "2px solid rgba(59, 130, 246, 0.7)",
+                        boxShadow: "0 0 20px 2px rgba(59, 130, 246, 0.3), inset 0 0 10px rgba(59, 130, 246, 0.2)",
+                        backdropFilter: "blur(8px)"
                       }}
                     >
-                      <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "12px", color: "#ffffff" }}>{m.year}</span>
+                      <span style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "15px", color: "#e8f4ff" }}>{m.year}</span>
                     </motion.div>
+                    
                     <div
-                      className="flex-1 p-5 rounded-xl border border-white/10"
-                      style={{ background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(12px)" }}
+                      className="flex-1 p-5 rounded-2xl"
+                      style={{ 
+                        background: "linear-gradient(135deg, rgba(10, 20, 38, 0.7), rgba(15, 28, 50, 0.4))", 
+                        border: "1px solid rgba(59, 130, 246, 0.15)",
+                        boxShadow: "0 8px 32px -5px rgba(0,0,0,0.4)",
+                        backdropFilter: "blur(12px)" 
+                      }}
                     >
-                      <div className="flex items-start justify-between mb-3">
-                        <h4 className="font-semibold text-blue-400 text-[15px]" style={{ fontFamily: "Inter, sans-serif" }}>
+                      <div className="flex items-start justify-between mb-3 gap-2">
+                        <h4 className="font-semibold text-[17px] leading-tight" style={{ fontFamily: "Rajdhani, sans-serif", color: "#60a5fa" }}>
                           {m.title || m.label}
                         </h4>
-                        <Icon size={16} className="text-slate-400 shrink-0" />
+                        <div className="w-8 h-8 shrink-0 rounded-full flex items-center justify-center bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                          <Icon size={14} />
+                        </div>
                       </div>
-                      <p className="text-[13px] text-slate-300 leading-relaxed text-left" style={{ fontFamily: "Inter, sans-serif" }}>
+                      <p className="text-[13px] text-slate-300/90 leading-relaxed text-left" style={{ fontFamily: "Inter, sans-serif" }}>
                         {m.description || m.desc}
                       </p>
                     </div>
@@ -536,12 +552,12 @@ export function About() {
         </div>
 
         {/* ── Team ── */}
-        <div className="mb-20">
+        <div className="mb-12 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-8 md:mb-12"
           >
             <div className="flex items-center justify-center gap-4 mb-5">
               <div className="h-[1px] w-10 bg-gradient-to-r from-transparent to-[var(--primary-accent)] opacity-50"></div>
@@ -587,24 +603,43 @@ export function About() {
             }
           `}</style>
 
+          {/* Ambient background glow for Tech Stack */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] sm:w-[600px] h-[240px] bg-blue-600/15 rounded-full blur-[90px] pointer-events-none -z-10" />
+
           {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-14"
+            className="text-center mb-10 sm:mb-14"
           >
-            <div className="flex items-center justify-center gap-4 mb-5">
+            <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-[1px] w-10 opacity-50" style={{ background: "linear-gradient(to right, transparent, var(--primary-accent))" }}></div>
-              <span className="inline-block py-1 px-4 rounded-full text-[10px] font-semibold tracking-widest uppercase" style={{ color: "var(--primary-accent)", fontFamily: "Inter, sans-serif", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <span className="inline-block py-1 px-4 rounded-full text-[10px] font-semibold tracking-widest uppercase" style={{ color: "var(--primary-accent)", fontFamily: "Inter, sans-serif", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)" }}>
                 {techData?.badge || "Technologies We Master"}
               </span>
               <div className="h-[1px] w-10 opacity-50" style={{ background: "linear-gradient(to left, transparent, var(--primary-accent))" }}></div>
             </div>
-            <h3 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)", color: "#e8f4ff", lineHeight: 1.2 }}>
-              {techData?.title || "Our"} <span style={{ color: "var(--primary-accent)", textShadow: "0 0 20px rgba(59,130,246,0.3)" }}>Tech Arsenal</span>
+            <h3 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 2.8rem)", color: "#e8f4ff", lineHeight: 1.2 }}>
+              {(() => {
+                const title = techData?.title || "Our Tech Arsenal";
+                if (title.toLowerCase().includes("tech arsenal")) {
+                  const prefix = title.replace(/tech arsenal/i, "").trim();
+                  return (
+                    <>
+                      {prefix ? `${prefix} ` : "Our "}
+                      <span style={{ color: "var(--primary-accent)", textShadow: "0 0 25px rgba(59,130,246,0.5)" }}>Tech Arsenal</span>
+                    </>
+                  );
+                }
+                return (
+                  <>
+                    {title} <span style={{ color: "var(--primary-accent)", textShadow: "0 0 25px rgba(59,130,246,0.5)" }}>Tech Arsenal</span>
+                  </>
+                );
+              })()}
             </h3>
-            <p className="mt-3 text-sm max-w-md mx-auto" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+            <p className="mt-3 text-xs sm:text-sm max-w-md mx-auto px-4" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
               Battle-tested tools and technologies we use to build world-class digital products.
             </p>
           </motion.div>
@@ -636,26 +671,33 @@ export function About() {
               const info = techColors[tech] || { color: defaultColors[i % defaultColors.length], emoji: "💡" };
               return (
                 <div
-                  className="group relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl cursor-default text-center mx-2 shrink-0 transition-all duration-300 hover:-translate-y-1"
+                  className="group relative flex flex-col items-center justify-center gap-2.5 p-4 sm:p-5 rounded-2xl cursor-default text-center mx-1.5 sm:mx-2 shrink-0 transition-all duration-300 hover:-translate-y-1.5"
                   style={{
-                    width: 130,
-                    background: "rgba(8,18,36,0.7)",
-                    border: `1px solid rgba(255,255,255,0.06)`,
-                    backdropFilter: "blur(12px)",
+                    width: 124,
+                    background: "linear-gradient(145deg, rgba(12,22,40,0.85) 0%, rgba(6,13,26,0.92) 100%)",
+                    border: `1px solid ${info.color}30`,
+                    boxShadow: `0 8px 24px -6px ${info.color}18`,
+                    backdropFilter: "blur(14px)",
                   }}
                 >
                   <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                    style={{ background: `radial-gradient(circle at 50% 0%, ${info.color}20 0%, transparent 70%)`, border: `1px solid ${info.color}35` }}
+                    style={{ background: `radial-gradient(circle at 50% 0%, ${info.color}25 0%, transparent 70%)` }}
                   />
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl relative z-10 transition-transform duration-300 group-hover:scale-110"
-                    style={{ background: `${info.color}12`, border: `1px solid ${info.color}25` }}>
+                  <div 
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl relative z-10 transition-transform duration-300 group-hover:scale-110 shadow-sm"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${info.color}20, ${info.color}08)`, 
+                      border: `1px solid ${info.color}40`,
+                      boxShadow: `0 0 15px ${info.color}20` 
+                    }}
+                  >
                     {info.emoji}
                   </div>
-                  <span className="text-xs font-semibold relative z-10 group-hover:text-white transition-colors duration-300 leading-tight"
-                    style={{ color: "#a8c4dd", fontFamily: "Inter, sans-serif" }}>
+                  <span className="text-xs font-semibold relative z-10 text-slate-200 group-hover:text-white transition-colors duration-300 leading-tight"
+                    style={{ fontFamily: "Inter, sans-serif" }}>
                     {tech}
                   </span>
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 group-hover:w-3/4 rounded-full transition-all duration-300"
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-8 group-hover:w-3/4 rounded-full transition-all duration-300"
                     style={{ background: `linear-gradient(90deg, transparent, ${info.color}, transparent)` }} />
                 </div>
               );
@@ -663,7 +705,7 @@ export function About() {
 
             return (
               <div className="marquee-wrap mb-4">
-                <div className="marquee-track">
+                <div className="marquee-track py-2">
                   <div className="marquee-ltr flex">
                     {doubled.map((tech, i) => <TechCard key={`tech-${i}`} tech={tech} i={i} />)}
                   </div>
@@ -685,26 +727,35 @@ export function About() {
             const doubled = [...stats, ...stats];
 
             return (
-              <div className="marquee-wrap mt-6">
-                <div className="marquee-track">
+              <div className="marquee-wrap mt-4 sm:mt-6">
+                <div className="marquee-track py-2">
                   <div className="marquee-rtl flex">
                     {doubled.map((stat, i) => (
                       <div
                         key={`stat-${i}`}
-                        className="group flex items-center gap-4 px-8 py-5 rounded-2xl mx-2 shrink-0 cursor-default transition-all duration-300 hover:-translate-y-1"
+                        className="group flex items-center gap-3.5 px-5 sm:px-7 py-3.5 sm:py-4 rounded-2xl mx-1.5 sm:mx-2 shrink-0 cursor-default transition-all duration-300 hover:-translate-y-1"
                         style={{
-                          background: "rgba(8,18,36,0.65)",
-                          border: `1px solid ${stat.color}25`,
-                          backdropFilter: "blur(12px)",
-                          minWidth: 200,
+                          background: "linear-gradient(145deg, rgba(12,22,40,0.85) 0%, rgba(6,13,26,0.92) 100%)",
+                          border: `1px solid ${stat.color}35`,
+                          boxShadow: `0 8px 24px -8px ${stat.color}20, inset 0 0 15px ${stat.color}05`,
+                          backdropFilter: "blur(14px)",
+                          minWidth: 175,
                         }}
                       >
-                        <span className="text-3xl">{stat.emoji}</span>
+                        <div 
+                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0"
+                          style={{
+                            background: `${stat.color}15`,
+                            border: `1px solid ${stat.color}35`
+                          }}
+                        >
+                          {stat.emoji}
+                        </div>
                         <div>
-                          <div style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "1.8rem", color: stat.color, textShadow: `0 0 20px ${stat.color}50`, lineHeight: 1 }}>
+                          <div style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "1.55rem", color: stat.color, textShadow: `0 0 16px ${stat.color}50`, lineHeight: 1.1 }}>
                             {stat.value}
                           </div>
-                          <div className="text-xs mt-0.5" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>{stat.label}</div>
+                          <div className="text-[11px] sm:text-xs mt-0.5 whitespace-nowrap" style={{ color: "#8eb2d1", fontFamily: "Inter, sans-serif" }}>{stat.label}</div>
                         </div>
                       </div>
                     ))}

@@ -57,11 +57,11 @@ export function Stats() {
   if (statsData.length === 0) return null;
 
   return (
-    <section id="stats" className="py-20 relative overflow-hidden">
+    <section id="stats" className="py-8 md:py-12 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative px-6">
         
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-6 md:mb-8">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}

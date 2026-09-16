@@ -159,7 +159,7 @@ export function Services() {
   const doubled = [...servicesData, ...servicesData];
 
   return (
-    <section id="services" className="py-32 relative overflow-hidden">
+    <section id="services" className="py-10 md:py-16 relative overflow-hidden">
       {/* Marquee CSS */}
       <style>{`
         @keyframes svc-marquee {
@@ -180,7 +180,7 @@ export function Services() {
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 30% 100%, rgba(167,139,250,0.05) 0%, transparent 60%)" }} />
 
       {/* Heading — full width center */}
-      <div ref={headingRef} className="max-w-4xl mx-auto px-6 text-center mb-16">
+      <div ref={headingRef} className="max-w-4xl mx-auto px-6 text-center mb-8 md:mb-12">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -257,7 +257,7 @@ export function Services() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.3 }}
-        className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-16 px-6"
+        className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 md:mt-10 px-6"
       >
         <button
           onClick={() => { const el = document.getElementById("contact"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}

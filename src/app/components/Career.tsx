@@ -21,7 +21,7 @@ export function Career() {
   const displayJobs = jobs.slice(0, 6);
 
   return (
-    <section id="career" className="py-24 relative overflow-hidden">
+    <section id="career" className="py-10 md:py-16 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 70% 0%, rgba(167,139,250,0.06) 0%, transparent 60%)" }} />
 
@@ -31,7 +31,7 @@ export function Career() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-8 md:mb-12"
         >
           <div className="inline-flex items-center justify-center gap-3 mb-8">
             <div className="h-[1px] w-12 opacity-60" style={{ background: "linear-gradient(to right, transparent, #a78bfa)" }} />
@@ -66,7 +66,7 @@ export function Career() {
         </motion.div>
 
         {/* Perks — premium cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10 md:mb-12">
           {perks.map((p, i) => {
             const Icon = p.icon;
             const accents = [
@@ -159,7 +159,7 @@ export function Career() {
             <div className="w-8 h-8 border-2 border-[var(--primary-accent)] border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {displayJobs.map((job, i) => (
               <JobCard key={job._id || job.title} job={job} index={i} onApply={setApplyJob} />
             ))}

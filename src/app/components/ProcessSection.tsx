@@ -40,7 +40,7 @@ export function ProcessSection() {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden bg-[#050b14]" id="process">
+    <section className="py-10 md:py-16 relative overflow-hidden bg-[#050b14]" id="process">
       {/* Background decorations */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
         backgroundImage: `radial-gradient(circle at 50% 50%, var(--primary-accent) 1px, transparent 1px)`,
@@ -58,7 +58,7 @@ export function ProcessSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16 lg:mb-20"
+          className="text-center mb-8 md:mb-12"
         >
           <div className="flex items-center justify-center gap-4 mb-6">
             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[var(--primary-accent)] opacity-50"></div>

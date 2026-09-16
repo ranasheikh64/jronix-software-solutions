@@ -167,7 +167,7 @@ export function Portfolio() {
   const filtered = active === "All" ? projectsData : projectsData.filter(p => p.category === active);
 
   return (
-    <section id="work" className="py-32 relative overflow-hidden">
+    <section id="work" className="py-10 md:py-16 relative overflow-hidden">
       {/* Decorative blobs */}
       <div className="absolute right-0 top-20 w-[600px] h-[600px] pointer-events-none opacity-10 rounded-full blur-[120px]"
         style={{ background: "radial-gradient(circle, #3b82f6 0%, transparent 70%)" }} />
@@ -177,7 +177,7 @@ export function Portfolio() {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* Header */}
-        <div ref={headingRef} className="mb-16 text-center">
+        <div ref={headingRef} className="mb-8 md:mb-12 text-center">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -259,7 +259,7 @@ export function Portfolio() {
         {/* Filter bar */}
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={headingInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
-          className="flex flex-wrap gap-2 mb-12"
+          className="flex flex-wrap gap-2 mb-6 md:mb-8"
         >
           {filters.map((f) => {
             const count = f === "All" ? projectsData.length : projectsData.filter(p => p.category === f).length;
@@ -335,7 +335,7 @@ export function Portfolio() {
         {!loading && projectsData.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
-            className="flex justify-center mt-16"
+            className="flex justify-center mt-8 md:mt-10"
           >
             <button
               onClick={() => navigate('/projects')}
