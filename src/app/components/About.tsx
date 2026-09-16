@@ -198,7 +198,7 @@ function ValueCard({ v, i }: { v: any; i: number }) {
       transition={{ duration: 0.55, delay: i * 0.1 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex flex-col sm:flex-row gap-4 sm:items-start p-5 rounded-2xl transition-all duration-500 cursor-default group overflow-hidden"
+      className="relative flex flex-col sm:flex-row gap-2.5 sm:gap-4 items-start p-3.5 sm:p-5 rounded-2xl transition-all duration-500 cursor-default group overflow-hidden"
       style={{
         background: hovered ? `linear-gradient(135deg, rgba(15,28,48,0.7) 0%, ${color}0a 100%)` : "rgba(10,22,40,0.5)",
         border: `1px solid ${hovered ? color + "40" : "rgba(255,255,255,0.06)"}`,
@@ -213,7 +213,7 @@ function ValueCard({ v, i }: { v: any; i: number }) {
       />
 
       <motion.div
-        className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 relative z-10"
+        className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 relative z-10"
         style={{ 
           background: hovered ? `${color}15` : "rgba(255,255,255,0.03)", 
           border: `1px solid ${hovered ? color + "30" : "rgba(255,255,255,0.05)"}`
@@ -221,13 +221,16 @@ function ValueCard({ v, i }: { v: any; i: number }) {
         animate={{ scale: hovered ? 1.08 : 1, rotate: hovered ? 5 : 0 }}
         transition={{ type: "spring", stiffness: 400, damping: 15 }}
       >
-        <Icon size={22} style={{ color: hovered ? color : "#8eaac2", transition: "color 0.3s ease" }} />
+        <Icon size={18} className="sm:w-[22px] sm:h-[22px]" style={{ color: hovered ? color : "#8eaac2", transition: "color 0.3s ease" }} />
       </motion.div>
       <div className="relative z-10">
-        <h4 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "18px", color: hovered ? "#ffffff" : "#e8f4ff", transition: "color 0.3s ease" }}>
+        <h4 
+          style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, color: hovered ? "#ffffff" : "#e8f4ff", transition: "color 0.3s ease" }}
+          className="text-[15px] sm:text-lg leading-tight"
+        >
           {v.title || v.label}
         </h4>
-        <p className="text-sm mt-1 leading-relaxed" style={{ color: "#8eaac2", fontFamily: "Inter, sans-serif" }}>
+        <p className="text-[11px] sm:text-sm mt-1 leading-relaxed" style={{ color: "#8eaac2", fontFamily: "Inter, sans-serif" }}>
           {v.description || v.desc}
         </p>
       </div>
@@ -407,7 +410,7 @@ export function About() {
               {aboutData?.mission || "Our mission: deliver world-class software with transparency, speed, and care. Every line of code we write is a commitment to your growth."}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5">
               {aboutData?.features?.map((v: any, i: number) => <ValueCard key={v.title} v={v} i={i} />)}
             </div>
           </motion.div>
