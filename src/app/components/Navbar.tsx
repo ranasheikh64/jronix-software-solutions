@@ -49,9 +49,13 @@ export function Navbar() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full"
       style={{
-        background: scrolled ? "rgba(5, 12, 26, 0.65)" : "transparent",
+        transform: "translate3d(0, 0, 0)",
+        WebkitTransform: "translate3d(0, 0, 0)",
+        WebkitBackfaceVisibility: "hidden",
+        backfaceVisibility: "hidden",
+        background: scrolled ? "rgba(5, 12, 26, 0.85)" : "transparent",
         backdropFilter: scrolled ? "blur(20px)" : "none",
         WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
         borderBottom: scrolled ? "1px solid rgba(59, 130, 246, 0.15)" : "1px solid transparent",

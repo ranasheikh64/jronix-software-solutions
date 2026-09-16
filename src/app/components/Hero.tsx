@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowDown, Play, Smartphone, Globe, Brain, Pen, Flame, Zap, Cloud, Container } from "lucide-react";
+import {  Play, Smartphone, Globe, Brain, Pen, Flame, Zap, Cloud, Container } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
 import heroBgImg from "../../imports/hero_bg_new.png";

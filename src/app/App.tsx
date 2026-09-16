@@ -36,7 +36,7 @@ const Home = () => (
 
 export default function App() {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#020617", overflowX: "hidden", position: "relative" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#020617", position: "relative" }}>
       
       {/* Global Seamless Background Gradient */}
       <div 
@@ -46,9 +46,11 @@ export default function App() {
         }} 
       />
 
+      {/* Fixed Navbar at Root Level */}
+      <Navbar />
+
       {/* ── Page content ── */}
       <div style={{ position: "relative", zIndex: 2 }}>
-        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/projects" element={<AllProjects />} />

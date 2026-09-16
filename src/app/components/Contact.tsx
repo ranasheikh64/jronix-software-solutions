@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, useInView } from "motion/react";
-import { Mail, Phone, MapPin, Clock, Send, MessageCircle, CheckCircle2, ArrowRight, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle, CheckCircle2, ArrowRight } from "lucide-react";
 import apiClient from "../../api/client";
 import { useRef } from "react";
 

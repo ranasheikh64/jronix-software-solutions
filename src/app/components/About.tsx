@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "motion/react";
-import { Target, Zap, Users, Globe2, Award, Github, Linkedin, Twitter, ChevronRight, Lightbulb, Cpu } from "lucide-react";
+import { Target, Zap, Users, Globe2, Award, Github, Linkedin, Twitter, Lightbulb, Cpu } from "lucide-react";
 import apiClient from "../../api/client";
 
 const iconMap: Record<string, any> = {
