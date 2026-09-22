@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion, useInView } from "motion/react";
-import { Clock, ArrowRight, ArrowUpRight, BookOpen, Sparkles } from "lucide-react";
+import { Clock, ArrowRight, ArrowUpRight, BookOpen, Sparkles, Play, Video } from "lucide-react";
 import apiClient from "../../api/client";
 import { useRef } from "react";
 
@@ -14,6 +14,13 @@ const categoryColors: Record<string, string> = {
   Default: "#60a5fa",
 };
 
+function getYouTubeVideoId(url: string | null | undefined): string | null {
+  if (!url || typeof url !== 'string') return null;
+  const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+  const match = url.match(regExp);
+  return (match && match[1]) ? match[1] : null;
+}
+
 function getColor(category: string) {
   return categoryColors[category] || categoryColors.Default;
 }
@@ -24,6 +31,13 @@ function BlogCard({ post, index }: { post: any; index: number }) {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
   const color = getColor(post.category);
+
+  let youtubeId = getYouTubeVideoId(post.youtubeUrl);
+  if (!youtubeId && post.description) {
+    youtubeId = getYouTubeVideoId(post.description);
+  }
+  const isVideo = Boolean(youtubeId);
+  const displayImage = post.image || (youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800");
 
   const date = new Date(post.createdAt || new Date()).toLocaleDateString("en-US", {
     month: "short", day: "numeric", year: "numeric",
@@ -55,32 +69,52 @@ function BlogCard({ post, index }: { post: any; index: number }) {
       {/* Image */}
       <div className="relative overflow-hidden" style={{ height: 210, flexShrink: 0 }}>
         <motion.img
-          src={post.image}
+          src={displayImage}
           alt={post.title}
           className="w-full h-full object-cover"
           animate={{ scale: hovered ? 1.08 : 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 40%, rgba(8,18,36,0.95) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(8,18,36,0.95) 100%)" }} />
 
-        {/* Category badge */}
-        {post.category && (
-          <span className="absolute top-4 left-4 text-[11px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md"
-            style={{ background: `${color}25`, border: `1px solid ${color}50`, color, fontFamily: "Inter, sans-serif" }}>
-            {post.category}
-          </span>
+        {/* YouTube Video Play Button Overlay */}
+        {isVideo && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <motion.div 
+              animate={{ scale: hovered ? 1.15 : 1 }}
+              transition={{ duration: 0.3 }}
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-red-600/90 text-white shadow-[0_0_25px_rgba(220,38,38,0.7)] backdrop-blur-sm border border-red-400/40"
+            >
+              <Play size={20} className="fill-white translate-x-0.5" />
+            </motion.div>
+          </div>
         )}
 
+        {/* Category & Video badges */}
+        <div className="absolute top-4 left-4 flex flex-wrap gap-1.5 z-10">
+          {post.category && (
+            <span className="text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-md"
+              style={{ background: `${color}25`, border: `1px solid ${color}50`, color, fontFamily: "Inter, sans-serif" }}>
+              {post.category}
+            </span>
+          )}
+          {isVideo && (
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md bg-red-500/20 border border-red-500/40 text-red-400 flex items-center gap-1">
+              <Video size={11} /> VIDEO
+            </span>
+          )}
+        </div>
+
         {/* Date badge */}
-        <span className="absolute top-4 right-4 text-[10px] font-medium px-2.5 py-1 rounded-full backdrop-blur-md"
+        <span className="absolute top-4 right-4 text-[10px] font-medium px-2.5 py-1 rounded-full backdrop-blur-md z-10"
           style={{ background: "rgba(8,18,36,0.7)", border: "1px solid rgba(255,255,255,0.1)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
           {date}
         </span>
 
         {/* Arrow on hover */}
         <motion.div
-          className="absolute bottom-4 right-4 w-8 h-8 rounded-full flex items-center justify-center"
+          className="absolute bottom-4 right-4 w-8 h-8 rounded-full flex items-center justify-center z-10"
           animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.7 }}
           transition={{ duration: 0.2 }}
           style={{ background: `${color}30`, backdropFilter: "blur(8px)" }}
