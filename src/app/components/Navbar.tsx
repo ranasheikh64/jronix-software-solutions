@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, Link } from "react-router";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
 
-const navLinks = ["Home", "About", "Work", "Services", "Career", "Blog", "Contact"];
+const navLinks = [
+  { name: "Home", path: "/" },
+  { name: "About", path: "/about" },
+  { name: "Work", path: "/portfolio" },
+  { name: "Services", path: "/services" },
+  { name: "Career", path: "/career" },
+  { name: "Blog", path: "/blog" },
+  { name: "Contact", path: "/contact" }
+];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -47,6 +55,8 @@ export function Navbar() {
     }
   };
 
+  const closeMobileMenu = () => setMobileOpen(false);
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 w-full"
@@ -78,15 +88,15 @@ export function Navbar() {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-2 bg-[rgba(255,255,255,0.02)] p-1.5 rounded-full border border-[rgba(255,255,255,0.05)]">
           {navLinks.map((link) => (
-            <button
-              key={link}
-              onClick={() => scrollTo(link)}
+            <Link
+              key={link.name}
+              to={link.path}
               className="relative text-sm px-4 py-2 rounded-full transition-all duration-300 group hover:bg-[rgba(59,130,246,0.1)]"
               style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}
             >
-              <span className="group-hover:text-white transition-colors relative z-10">{link}</span>
+              <span className="group-hover:text-white transition-colors relative z-10">{link.name}</span>
               <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: "inset 0 0 10px rgba(59,130,246,0.2)" }} />
-            </button>
+            </Link>
           ))}
         </nav>
 
@@ -128,10 +138,10 @@ export function Navbar() {
           >
             <div className="px-6 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
-                <button
-                  key={link}
-                  type="button"
-                  onClick={() => scrollTo(link)}
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  onClick={closeMobileMenu}
                   className="w-full text-left py-3 px-2 border-b text-sm font-medium transition-all flex items-center justify-between active:bg-blue-500/15 active:text-white rounded-lg"
                   style={{
                     color: "#a8c4dd",
@@ -139,14 +149,14 @@ export function Navbar() {
                     fontFamily: "Inter, sans-serif"
                   }}
                 >
-                  <span>{link}</span>
+                  <span>{link.name}</span>
                   <ChevronRight size={15} className="opacity-40" />
-                </button>
+                </Link>
               ))}
-              <button
-                type="button"
-                onClick={() => scrollTo("contact")}
-                className="mt-3 w-full py-3 rounded-xl text-sm font-bold text-center transition-transform active:scale-95 shadow-lg"
+              <Link
+                to="/contact"
+                onClick={closeMobileMenu}
+                className="mt-3 block w-full py-3 rounded-xl text-sm font-bold text-center transition-transform active:scale-95 shadow-lg"
                 style={{
                   background: "linear-gradient(135deg, #3b82f6, #6366f1)",
                   color: "#fff",
@@ -154,7 +164,7 @@ export function Navbar() {
                 }}
               >
                 Get a Quote
-              </button>
+              </Link>
             </div>
           </motion.div>
         )}

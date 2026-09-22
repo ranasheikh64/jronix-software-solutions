@@ -1,7 +1,9 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { Smartphone, Globe, Server, Pen, Upload, Brain, Layout, ArrowRight, Zap, Code, ExternalLink } from "lucide-react";
+import { Link } from "react-router";
 import apiClient from "../../api/client";
+import { toSlug } from "../pages/SingleService";
 
 const iconMap: Record<string, any> = {
   mobile: Smartphone,
@@ -31,7 +33,8 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
   const accent = cardAccents[index % cardAccents.length];
 
   return (
-    <div
+    <Link
+      to={`/service/${toSlug(service.title)}`}
       className="relative shrink-0 rounded-2xl overflow-hidden cursor-pointer group transition-all duration-400"
       style={{
         width: 320,
@@ -42,6 +45,8 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
         border: `1px solid ${hovered ? accent.color + "50" : "rgba(255,255,255,0.06)"}`,
         boxShadow: hovered ? `0 20px 60px ${accent.glow}, 0 0 0 1px ${accent.color}30` : "0 4px 24px rgba(0,0,0,0.4)",
         backdropFilter: "blur(12px)",
+        display: "block",
+        textDecoration: "none",
         transform: hovered ? "translateY(-6px)" : "translateY(0)",
         transition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
       }}
@@ -119,7 +124,7 @@ function ServiceCard({ service, index }: { service: any; index: number }) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

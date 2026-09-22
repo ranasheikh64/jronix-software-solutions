@@ -18,6 +18,8 @@ import { AllProjects } from "./pages/AllProjects";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { TermsConditions } from "./pages/TermsConditions";
 import { AllPositions } from "./pages/AllPositions";
+import { SectionPage } from "./pages/SectionPage";
+import { SingleService } from "./pages/SingleService";
 
 const Home = () => (
   <>
@@ -53,6 +55,13 @@ export default function App() {
       <div style={{ position: "relative", zIndex: 2 }}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<SectionPage title="About Us"><About /></SectionPage>} />
+          <Route path="/services" element={<SectionPage title="Services"><Services /></SectionPage>} />
+          <Route path="/portfolio" element={<SectionPage title="Portfolio"><Portfolio /></SectionPage>} />
+          <Route path="/career" element={<SectionPage title="Career"><Career /></SectionPage>} />
+          <Route path="/blog" element={<SectionPage title="Blog"><Blog /></SectionPage>} />
+          <Route path="/contact" element={<SectionPage title="Contact Us"><Contact /></SectionPage>} />
+          
           <Route path="/projects" element={<AllProjects />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
@@ -60,6 +69,7 @@ export default function App() {
           <Route path="/blog/:id" element={<SingleBlog />} />
           <Route path="/project/:id" element={<SingleProject />} />
           <Route path="/open-positions" element={<AllPositions />} />
+          <Route path="/service/:slug" element={<SingleService />} />
         </Routes>
         <Footer />
       </div>

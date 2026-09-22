@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, SearchX } from "lucide-react";
 import { Link } from "react-router";
 import { useJobs } from "../hooks/useJobs";
 import { JobCard } from "../components/JobCard";
@@ -62,11 +62,33 @@ export function AllPositions() {
           </div>
         )}
 
-        {/* Empty state (optional, just in case) */}
+        {/* Empty state */}
         {!loading && jobs.length === 0 && (
-          <div className="text-center py-20 bg-[rgba(13,31,60,0.3)] rounded-2xl border border-[rgba(255,255,255,0.05)]">
-            <p className="text-[#7aa8cc]" style={{ fontFamily: "Inter, sans-serif" }}>No open positions at the moment. Check back later!</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-24 px-6 text-center rounded-3xl relative overflow-hidden"
+            style={{
+              background: "rgba(8,18,36,0.5)",
+              border: "1px dashed rgba(59,130,246,0.3)",
+            }}
+          >
+            {/* Background glow */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(circle at center, rgba(59,130,246,0.05) 0%, transparent 60%)" }} />
+            
+            <div className="w-20 h-20 mb-6 rounded-full flex items-center justify-center relative" style={{ background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)" }}>
+              <SearchX size={32} style={{ color: "var(--primary-accent)" }} />
+              <div className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ background: "var(--primary-accent)" }} />
+            </div>
+            
+            <h3 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "28px", color: "#e8f4ff", marginBottom: "12px" }}>
+              No Open Positions Right Now
+            </h3>
+            
+            <p className="max-w-md text-sm leading-relaxed" style={{ color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+              We're currently not hiring for any new roles, but we're always looking for great talent. Feel free to send us your resume at <span style={{ color: "var(--primary-accent)", fontWeight: 500 }}>hello@jronix.com</span> and we'll keep you in mind for future opportunities.
+            </p>
+          </motion.div>
         )}
 
         <AnimatePresence>

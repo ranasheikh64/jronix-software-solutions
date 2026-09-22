@@ -48,11 +48,11 @@ export function ProcessSection() {
         maskImage: 'radial-gradient(circle at 50% 50%, black, transparent 80%)',
         WebkitMaskImage: 'radial-gradient(circle at 50% 50%, black, transparent 80%)'
       }}></div>
-      
+
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--primary-accent)] opacity-[0.03] rounded-full blur-[120px] pointer-events-none z-0" />
-      
+
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
-        
+
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -67,12 +67,12 @@ export function ProcessSection() {
             </span>
             <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[var(--primary-accent)] opacity-50"></div>
           </div>
-          
+
           <h2 style={{ fontFamily: "Rajdhani, sans-serif", fontWeight: 700, fontSize: "clamp(2rem, 4vw, 3.5rem)", color: "#e8f4ff", lineHeight: 1.2 }} className="mx-auto drop-shadow-lg mb-4">
             Transforming Ideas Into <br />
             <span style={{ color: "var(--primary-accent)", textShadow: "0 0 20px rgba(59,130,246,0.3)" }}>Actionable Solutions</span>
           </h2>
-          
+
           <p className="max-w-2xl mx-auto text-[#7aa8cc] text-sm sm:text-base leading-relaxed" style={{ fontFamily: "Inter, sans-serif" }}>
             We follow a clear and strategic process to turn your vision into high-performing digital products. From planning to deployment, we build solutions that create real impact.
           </p>
@@ -80,12 +80,12 @@ export function ProcessSection() {
 
         {/* Desktop Layout */}
         <div className="hidden lg:flex items-center justify-center relative min-h-[600px] xl:min-h-[700px]">
-          
+
           {/* Central Orb & Rings */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20">
             {/* Outer large faint ring */}
             <div className="absolute w-[500px] h-[500px] xl:w-[650px] xl:h-[650px] border border-[var(--primary-accent)] opacity-20 rounded-full z-0"></div>
-            
+
             {/* Inner glowing ring */}
             <div className="absolute w-[300px] h-[300px] xl:w-[350px] xl:h-[350px] border border-[var(--primary-accent)] opacity-50 rounded-full z-0 shadow-[0_0_50px_rgba(59,130,246,0.2)] animate-[spin_20s_linear_infinite]">
               <div className="absolute top-0 left-1/2 w-3 h-3 -ml-1.5 -mt-1.5 rounded-full bg-[var(--primary-accent)] shadow-[0_0_15px_var(--primary-accent)]"></div>
@@ -93,7 +93,7 @@ export function ProcessSection() {
             </div>
 
             {/* Core Orb with Logo */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -102,10 +102,10 @@ export function ProcessSection() {
               <div className="w-full h-full rounded-full p-1 relative flex items-center justify-center bg-gradient-to-br from-[#0a1120] to-[#050b14] border border-[var(--primary-accent)] shadow-[0_0_50px_rgba(59,130,246,0.4),inset_0_0_30px_rgba(59,130,246,0.2)]">
                 {/* Inner glass shine */}
                 <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none"></div>
-                
-                <img 
-                  src={`${import.meta.env.BASE_URL}logo.jpg`} 
-                  alt="Jronix Logo" 
+
+                <img
+                  src={`${import.meta.env.BASE_URL}logo.jpg`}
+                  alt="Jronix Logo"
                   className="w-full h-full object-cover rounded-full scale-95"
                 />
               </div>
@@ -117,7 +117,7 @@ export function ProcessSection() {
             {leftProcesses.map((process, i) => {
               const IconComponent = iconMap[process.icon] || Settings;
               const { isTop, isBottom, isMiddle } = getLineStyle(true, i, leftProcesses.length);
-              
+
               return (
                 <motion.div
                   key={process._id || i}
@@ -142,7 +142,7 @@ export function ProcessSection() {
                       )}
                       {isBottom && (
                         <div className="absolute left-0 bottom-0 w-full h-[60px] border-b border-r border-[var(--primary-accent)] opacity-50 rounded-br-[30px] border-t-0 border-l-0">
-                           <div className="absolute right-[-4px] top-[-4px] w-2 h-2 rounded-full bg-[var(--primary-accent)] shadow-[0_0_10px_var(--primary-accent)]"></div>
+                          <div className="absolute right-[-4px] top-[-4px] w-2 h-2 rounded-full bg-[var(--primary-accent)] shadow-[0_0_10px_var(--primary-accent)]"></div>
                         </div>
                       )}
                     </div>
@@ -152,12 +152,12 @@ export function ProcessSection() {
                   <div className="flex bg-[rgba(10,17,32,0.8)] border border-[rgba(255,255,255,0.05)] rounded-2xl overflow-hidden hover:bg-[rgba(20,30,50,0.8)] transition-all duration-300 backdrop-blur-md relative shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
                     {/* Glowing Left Border */}
                     <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[var(--primary-accent)] shadow-[2px_0_15px_var(--primary-accent)]"></div>
-                    
+
                     <div className="flex items-center gap-4 p-5 pl-7 w-full">
                       <div className="shrink-0 w-12 h-12 rounded-full bg-[rgba(59,130,246,0.1)] flex items-center justify-center shadow-[inset_0_0_10px_rgba(59,130,246,0.2)]">
                         <IconComponent size={20} className="text-[var(--primary-accent)]" />
                       </div>
-                      
+
                       <div className="flex-1 text-left">
                         <h3 className="text-lg text-[#e8f4ff] font-bold mb-1 flex items-center gap-2" style={{ fontFamily: "Rajdhani, sans-serif" }}>
                           <span className="text-[var(--primary-accent)] text-sm font-semibold opacity-80">0{process.stepNumber}</span>
@@ -214,12 +214,12 @@ export function ProcessSection() {
                   <div className="flex bg-[rgba(10,17,32,0.8)] border border-[rgba(255,255,255,0.05)] rounded-2xl overflow-hidden hover:bg-[rgba(20,30,50,0.8)] transition-all duration-300 backdrop-blur-md relative shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
                     {/* Glowing Right Border */}
                     <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-[var(--primary-accent)] shadow-[-2px_0_15px_var(--primary-accent)]"></div>
-                    
+
                     <div className="flex items-center gap-4 p-5 pr-7 w-full">
                       <div className="shrink-0 w-12 h-12 rounded-full bg-[rgba(59,130,246,0.1)] flex items-center justify-center shadow-[inset_0_0_10px_rgba(59,130,246,0.2)]">
                         <IconComponent size={20} className="text-[var(--primary-accent)]" />
                       </div>
-                      
+
                       <div className="flex-1 text-left">
                         <h3 className="text-lg text-[#e8f4ff] font-bold mb-1 flex items-center gap-2" style={{ fontFamily: "Rajdhani, sans-serif" }}>
                           <span className="text-[var(--primary-accent)] text-sm font-semibold opacity-80">0{process.stepNumber}</span>
@@ -240,22 +240,22 @@ export function ProcessSection() {
 
         {/* Mobile Layout */}
         <div className="lg:hidden flex flex-col items-center gap-8 relative mt-10">
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="relative w-48 h-48 mb-8 z-20"
           >
             <div className="absolute inset-[-20px] rounded-full border border-[var(--primary-accent)] opacity-30 animate-[spin_10s_linear_infinite]">
-                <div className="absolute top-0 left-1/2 w-2 h-2 -ml-1 -mt-1 rounded-full bg-[var(--primary-accent)] shadow-[0_0_10px_var(--primary-accent)]"></div>
+              <div className="absolute top-0 left-1/2 w-2 h-2 -ml-1 -mt-1 rounded-full bg-[var(--primary-accent)] shadow-[0_0_10px_var(--primary-accent)]"></div>
             </div>
-            
+
             <div className="w-full h-full rounded-full p-1 relative flex items-center justify-center bg-gradient-to-br from-[#0a1120] to-[#050b14] border border-[var(--primary-accent)] shadow-[0_0_30px_rgba(59,130,246,0.3)]">
               <div className="absolute inset-2 rounded-full bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none"></div>
-              <img 
-                src={`${import.meta.env.BASE_URL}logo.jpg`} 
-                alt="Jronix Logo" 
+              <img
+                src={`${import.meta.env.BASE_URL}logo.jpg`}
+                alt="Jronix Logo"
                 className="w-full h-full object-cover rounded-full scale-95"
               />
             </div>
@@ -265,7 +265,7 @@ export function ProcessSection() {
             {processes.map((process, i) => {
               const IconComponent = iconMap[process.icon] || Settings;
               const isEven = i % 2 === 0;
-              
+
               return (
                 <motion.div
                   key={process._id || i}
@@ -278,12 +278,12 @@ export function ProcessSection() {
                   <div className="flex bg-[rgba(10,17,32,0.8)] border border-[rgba(255,255,255,0.05)] rounded-2xl overflow-hidden backdrop-blur-md relative shadow-[0_5px_20px_rgba(0,0,0,0.2)]">
                     {/* Alternating Edge glow for mobile too, or just left edge */}
                     <div className={`absolute top-0 bottom-0 w-1.5 bg-[var(--primary-accent)] ${isEven ? 'left-0 shadow-[2px_0_15px_var(--primary-accent)]' : 'right-0 shadow-[-2px_0_15px_var(--primary-accent)]'}`}></div>
-                    
+
                     <div className={`flex items-center gap-4 p-5 w-full ${isEven ? 'pl-7' : 'pr-7 flex-row-reverse'}`}>
                       <div className="shrink-0 w-12 h-12 rounded-full bg-[rgba(59,130,246,0.1)] flex items-center justify-center shadow-[inset_0_0_10px_rgba(59,130,246,0.2)]">
                         <IconComponent size={20} className="text-[var(--primary-accent)]" />
                       </div>
-                      
+
                       <div className={`flex-1 ${isEven ? 'text-left' : 'text-right'}`}>
                         <h3 className={`text-lg text-[#e8f4ff] font-bold mb-1 flex items-center gap-2 ${isEven ? '' : 'justify-end'}`} style={{ fontFamily: "Rajdhani, sans-serif" }}>
                           {isEven && <span className="text-[var(--primary-accent)] text-sm font-semibold opacity-80">0{process.stepNumber}</span>}
@@ -303,7 +303,7 @@ export function ProcessSection() {
         </div>
 
         {/* Bottom Pill (Your Vision -> Our Process -> Real Results) */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

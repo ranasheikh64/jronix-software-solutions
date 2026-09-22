@@ -6,6 +6,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import logoImg from "../../imports/photo_2026-06-14_20-40-57.jpg";
 import footerBg from "../../imports/footer_bg.png";
 import apiClient from "../../api/client";
+import { toSlug } from "../pages/SingleService";
 
 const iconMap: Record<string, any> = {
   github: Github,
@@ -21,16 +22,19 @@ export function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const [footerData, setFooterData] = useState<any>(null);
   const [servicesData, setServicesData] = useState<any[]>([]);
+  const [contactInfo, setContactInfo] = useState<any>(null);
 
   useEffect(() => {
     const fetchFooterData = async () => {
       try {
-        const [footerRes, servicesRes] = await Promise.all([
+        const [footerRes, servicesRes, contactRes] = await Promise.all([
           apiClient.get('/footer'),
-          apiClient.get('/services')
+          apiClient.get('/services'),
+          apiClient.get('/contact/info')
         ]);
         setFooterData(footerRes.data);
         setServicesData(servicesRes.data);
+        setContactInfo(contactRes.data);
       } catch (error) {
         console.error("Failed to fetch footer data:", error);
       }
@@ -152,7 +156,16 @@ export function Footer() {
               {serviceLinks?.map((s: any) => {
                 const sName = typeof s === 'string' ? s : s.name || "";
                 return (
-                  <li key={sName || s} className="flex items-center gap-2 group cursor-pointer">
+                  <li 
+                    key={sName || s} 
+                    className="flex items-center gap-2 group cursor-pointer"
+                    onClick={() => {
+                      if (sName) {
+                        navigate(`/service/${toSlug(sName)}`);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+                    }}
+                  >
                     <div className="w-1.5 h-1.5 rounded-full bg-[var(--primary-accent)] opacity-0 group-hover:opacity-100 transition-opacity" />
                     <span 
                       className="text-sm transition-colors duration-200 group-hover:text-white -ml-3 group-hover:ml-0" 
@@ -210,10 +223,10 @@ export function Footer() {
             {/* Contact quick info */}
             <div className="mt-6 flex flex-col gap-2.5">
               <div className="flex items-center gap-2 text-xs" style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}>
-                <Mail size={12} style={{ color: "var(--primary-accent)" }} /> hello@jronix.com
+                <Mail size={12} style={{ color: "var(--primary-accent)" }} /> {contactInfo?.email || "hello@jronix.com"}
               </div>
               <div className="flex items-center gap-2 text-xs" style={{ color: "#5a8aaa", fontFamily: "Inter, sans-serif" }}>
-                <MapPin size={12} style={{ color: "var(--primary-accent)" }} /> Dhaka, Bangladesh
+                <MapPin size={12} style={{ color: "var(--primary-accent)" }} /> {contactInfo?.location || "Dhaka, Bangladesh"}
               </div>
             </div>
           </div>
