@@ -12,6 +12,7 @@ import {
   Maximize2,
   Minimize2,
   ShieldCheck,
+  ShieldAlert,
   AlertCircle
 } from "lucide-react";
 
@@ -44,30 +45,53 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
   const cleanLiveUrl = sanitizeUrl(liveUrl);
   const hasLiveUrl = Boolean(cleanLiveUrl);
 
+  // Check if domain is known to have anti-bot/DDoS verification challenge (e.g. OpenResty WAF / Cloudflare)
+  const isBotProtectedSite = Boolean(
+    cleanLiveUrl && cleanLiveUrl.toLowerCase().includes("wondersalliedhealth")
+  );
+
   const [device, setDevice] = useState<DeviceMode>("laptop");
+  // Default to design view if the site has bot protection, otherwise live if URL is present
   const [viewMode, setViewMode] = useState<"live" | "screenshot">(
-    hasLiveUrl ? "live" : "screenshot"
+    hasLiveUrl && !isBotProtectedSite ? "live" : "screenshot"
   );
   const [iframeKey, setIframeKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showWafHint, setShowWafHint] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // If liveUrl changes or is missing
   useEffect(() => {
     if (!hasLiveUrl) {
       setViewMode("screenshot");
+    } else if (isBotProtectedSite) {
+      setViewMode("screenshot");
     }
-  }, [hasLiveUrl]);
+  }, [hasLiveUrl, isBotProtectedSite]);
+
+  // If stuck on live mode for more than 4 seconds, offer switch to design view
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (viewMode === "live") {
+      timer = setTimeout(() => {
+        setShowWafHint(true);
+      }, 4000);
+    } else {
+      setShowWafHint(false);
+    }
+    return () => clearTimeout(timer);
+  }, [viewMode, iframeKey]);
 
   const handleReload = () => {
     setIsLoading(true);
+    setShowWafHint(false);
     setIframeKey((prev) => prev + 1);
   };
 
   const domainName = cleanLiveUrl
     ? cleanLiveUrl.replace(/^https?:\/\//, "").replace(/\/.*$/, "")
-    : "live-preview";
+    : "preview";
 
   return (
     <div
@@ -146,40 +170,40 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
           </button>
         </div>
 
-        {/* View Mode (Live vs Screenshot) & Tools */}
+        {/* View Mode (Design View vs Live View) & Tools */}
         <div className="flex items-center gap-2 ml-auto">
           {hasLiveUrl && (
             <div className="flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-              <button
-                type="button"
-                onClick={() => setViewMode("live")}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-                  viewMode === "live"
-                    ? "bg-white/10 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-                title="Interactive Live Website"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <Globe size={13} />
-                <span className="hidden sm:inline">Live</span>
-              </button>
-
               {fallbackImage && (
                 <button
                   type="button"
                   onClick={() => setViewMode("screenshot")}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     viewMode === "screenshot"
-                      ? "bg-white/10 text-white shadow-sm"
+                      ? "bg-white/15 text-white shadow-md shadow-black/40 border border-white/10"
                       : "text-slate-400 hover:text-slate-200"
                   }`}
-                  title="Static Screenshot"
+                  title="High-resolution verified design preview"
                 >
-                  <ImageIcon size={13} />
-                  <span className="hidden sm:inline">Screenshot</span>
+                  <ImageIcon size={13} className={viewMode === "screenshot" ? "text-cyan-400" : ""} />
+                  <span>Design View</span>
                 </button>
               )}
+
+              <button
+                type="button"
+                onClick={() => setViewMode("live")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  viewMode === "live"
+                    ? "bg-white/15 text-white shadow-md shadow-black/40 border border-white/10"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Interactive live website"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${viewMode === "live" ? "bg-emerald-400 animate-pulse" : "bg-slate-500"}`} />
+                <Globe size={13} className={viewMode === "live" ? "text-emerald-400" : ""} />
+                <span>Live View</span>
+              </button>
             </div>
           )}
 
@@ -260,8 +284,14 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
 
                     {/* Status Badge */}
                     <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                      <ShieldCheck size={11} className="text-emerald-400" />
-                      <span className="hidden sm:inline">Secure</span>
+                      {viewMode === "screenshot" ? (
+                        <span className="px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-medium">Design</span>
+                      ) : (
+                        <>
+                          <ShieldCheck size={11} className="text-emerald-400" />
+                          <span className="hidden sm:inline">Live</span>
+                        </>
+                      )}
                     </div>
                   </div>
 
@@ -281,16 +311,47 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
                           title={`${projectTitle} - Laptop Live Preview`}
                           onLoad={() => setIsLoading(false)}
                           className="w-full h-full border-0 bg-white"
-                          sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         />
                       </>
                     ) : (
-                      <div className="w-full h-full overflow-y-auto bg-slate-950 flex items-center justify-center">
+                      <div className="w-full h-full overflow-y-auto bg-slate-950 scroll-smooth">
                         <img
                           src={fallbackImage}
                           alt={projectTitle}
-                          className="w-full h-full object-cover object-top"
+                          className="w-full h-auto min-h-full object-cover object-top block"
                         />
+                      </div>
+                    )}
+
+                    {/* WAF Anti-bot notice prompt */}
+                    {showWafHint && viewMode === "live" && (
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 max-w-lg w-[92%] p-3 rounded-xl bg-[#091122]/95 border border-amber-500/40 backdrop-blur-xl shadow-2xl flex items-center justify-between gap-3 text-xs text-slate-200">
+                        <div className="flex items-center gap-2">
+                          <ShieldAlert size={16} className="text-amber-400 shrink-0" />
+                          <span className="text-[11px] leading-tight">
+                            Website has Bot/DDoS Protection.
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {fallbackImage && (
+                            <button
+                              type="button"
+                              onClick={() => setViewMode("screenshot")}
+                              className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-[11px] transition-colors"
+                            >
+                              View Design
+                            </button>
+                          )}
+                          <a
+                            href={cleanLiveUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium text-[11px] transition-colors inline-flex items-center gap-1"
+                          >
+                            Open Live <ExternalLink size={10} />
+                          </a>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -299,12 +360,9 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
 
               {/* Laptop Bottom Base / Keyboard Lip */}
               <div className="w-full flex flex-col items-center">
-                {/* Aluminum Hinge Bar */}
                 <div className="w-[102%] sm:w-[103%] h-3 sm:h-4 bg-gradient-to-b from-[#2d3748] via-[#1a202c] to-[#171923] rounded-b-lg border-b border-x border-slate-700/60 shadow-md relative flex justify-center">
-                  {/* Thumb opening groove */}
                   <div className="w-20 sm:w-28 h-1.5 bg-[#0a0d14] rounded-b-md mx-auto" />
                 </div>
-                {/* Table reflection / soft shadow */}
                 <div className="w-[90%] h-4 bg-blue-500/10 blur-xl -mt-1 rounded-full pointer-events-none" />
               </div>
             </motion.div>
@@ -320,16 +378,12 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="flex flex-col items-center w-full max-w-[580px] px-4"
             >
-              {/* Tablet Frame */}
               <div className="w-full rounded-[32px] bg-[#141926] p-4 sm:p-5 border border-slate-700/80 shadow-[0_25px_70px_rgba(0,0,0,0.85)] relative">
-                {/* Camera dot at top */}
                 <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#0a0d14] border border-slate-700/80 flex items-center justify-center">
                   <div className="w-0.5 h-0.5 rounded-full bg-cyan-400/80" />
                 </div>
 
-                {/* Tablet Screen */}
                 <div className="w-full rounded-2xl overflow-hidden bg-[#050b14] border border-slate-800 flex flex-col">
-                  {/* Browser Bar */}
                   <div className="w-full h-8 bg-[#0b1324] border-b border-white/[0.07] px-3 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded-full bg-[#ff5f56]" />
@@ -343,7 +397,6 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
                     <div className="w-4" />
                   </div>
 
-                  {/* Tablet Viewport */}
                   <div className="relative w-full h-[520px] sm:h-[620px] bg-white overflow-hidden">
                     {viewMode === "live" && cleanLiveUrl ? (
                       <>
@@ -359,15 +412,15 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
                           title={`${projectTitle} - Tablet Live Preview`}
                           onLoad={() => setIsLoading(false)}
                           className="w-full h-full border-0 bg-white"
-                          sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         />
                       </>
                     ) : (
-                      <div className="w-full h-full overflow-y-auto bg-slate-950 flex items-center justify-center">
+                      <div className="w-full h-full overflow-y-auto bg-slate-950 scroll-smooth">
                         <img
                           src={fallbackImage}
                           alt={projectTitle}
-                          className="w-full h-full object-cover object-top"
+                          className="w-full h-auto min-h-full object-cover object-top block"
                         />
                       </div>
                     )}
@@ -375,7 +428,6 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
                 </div>
               </div>
 
-              {/* Soft glow */}
               <div className="w-[80%] h-4 bg-blue-500/10 blur-xl mt-1 rounded-full pointer-events-none" />
             </motion.div>
           )}
@@ -390,37 +442,29 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="flex flex-col items-center w-full max-w-[360px] px-4"
             >
-              {/* iPhone Style Bezel */}
               <div className="w-full rounded-[48px] bg-[#141926] p-3 sm:p-3.5 border-2 border-slate-700/80 shadow-[0_25px_70px_rgba(0,0,0,0.9)] relative">
-                {/* Volume & Power button accents on sides */}
                 <div className="absolute -left-1 top-24 w-1 h-8 bg-slate-600 rounded-l-sm" />
                 <div className="absolute -left-1 top-36 w-1 h-12 bg-slate-600 rounded-l-sm" />
                 <div className="absolute -right-1 top-28 w-1 h-14 bg-slate-600 rounded-r-sm" />
 
-                {/* Screen */}
                 <div className="w-full rounded-[38px] overflow-hidden bg-[#050b14] border border-slate-800 flex flex-col relative">
-                  {/* Dynamic Island Header */}
                   <div className="w-full h-10 bg-[#090f1d] px-5 flex items-center justify-between relative z-30 select-none">
                     <span className="text-[11px] font-semibold text-white/90">9:41</span>
-                    {/* Dynamic Island pill */}
                     <div className="w-24 h-5 bg-black rounded-full mx-auto flex items-center justify-end px-2 gap-1 border border-white/5">
                       <div className="w-2 h-2 rounded-full bg-[#111827] flex items-center justify-center">
                         <div className="w-1 h-1 rounded-full bg-blue-500/80" />
                       </div>
                     </div>
-                    {/* Battery/WiFi icons */}
                     <div className="w-4 h-2 rounded-sm border border-white/60 relative">
                       <div className="w-2.5 h-full bg-white/80" />
                     </div>
                   </div>
 
-                  {/* Browser URL header */}
                   <div className="w-full h-7 bg-[#0b1324] border-b border-white/[0.06] px-3 flex items-center justify-center gap-1.5 text-[10px] text-slate-300">
                     <Lock size={9} className="text-emerald-400" />
                     <span className="truncate max-w-[180px]">{domainName}</span>
                   </div>
 
-                  {/* Mobile Screen Viewport */}
                   <div className="relative w-full h-[580px] bg-white overflow-hidden">
                     {viewMode === "live" && cleanLiveUrl ? (
                       <>
@@ -436,28 +480,26 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
                           title={`${projectTitle} - Mobile Live Preview`}
                           onLoad={() => setIsLoading(false)}
                           className="w-full h-full border-0 bg-white"
-                          sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         />
                       </>
                     ) : (
-                      <div className="w-full h-full overflow-y-auto bg-slate-950 flex items-center justify-center">
+                      <div className="w-full h-full overflow-y-auto bg-slate-950 scroll-smooth">
                         <img
                           src={fallbackImage}
                           alt={projectTitle}
-                          className="w-full h-full object-cover object-top"
+                          className="w-full h-auto min-h-full object-cover object-top block"
                         />
                       </div>
                     )}
                   </div>
 
-                  {/* Home indicator bar at bottom */}
                   <div className="w-full h-5 bg-[#090f1d] flex items-center justify-center">
                     <div className="w-28 h-1 bg-white/40 rounded-full" />
                   </div>
                 </div>
               </div>
 
-              {/* Soft glow */}
               <div className="w-[60%] h-4 bg-blue-500/10 blur-xl mt-1 rounded-full pointer-events-none" />
             </motion.div>
           )}
@@ -465,23 +507,21 @@ export const WebMockupViewer: React.FC<WebMockupViewerProps> = ({
       </div>
 
       {/* Helpful Hint Notice */}
-      {viewMode === "live" && cleanLiveUrl && (
-        <div className="flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-slate-400 text-center">
-          <AlertCircle size={13} className="text-blue-400 shrink-0" />
-          <span>
-            Interactive preview enabled. If this website restricts embedding, you can{" "}
-            <a
-              href={cleanLiveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-400 hover:underline font-medium"
-            >
-              Open in New Window
-            </a>
-            {fallbackImage && " or switch to Screenshot mode"}.
-          </span>
-        </div>
-      )}
+      <div className="flex items-center gap-2 mt-4 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-slate-400 text-center">
+        <AlertCircle size={13} className="text-blue-400 shrink-0" />
+        <span>
+          Viewing responsive mockup presentation. Click{" "}
+          <a
+            href={cleanLiveUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-400 hover:underline font-medium inline-flex items-center gap-0.5"
+          >
+            Open New Tab <ExternalLink size={10} />
+          </a>{" "}
+          to interact directly with the live server.
+        </span>
+      </div>
     </div>
   );
 };
