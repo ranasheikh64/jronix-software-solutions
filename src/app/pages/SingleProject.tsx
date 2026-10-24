@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { ArrowLeft, ExternalLink, Github, Code2, Star, Calendar, Users, Globe, ChevronRight, Home, Layers, AlertCircle } from "lucide-react";
+import { ArrowLeft, ExternalLink, Code2, Star, Calendar, Users, Globe, ChevronRight, Home, Layers, AlertCircle, Smartphone, Apple } from "lucide-react";
 import apiClient from "../../api/client";
+import { DeviceFrameset } from 'react-device-frameset';
+import 'react-device-frameset/styles/marvel-devices.min.css';
+import useEmblaCarousel from 'embla-carousel-react';
 
 const accentPalette = ["#3b82f6", "#a78bfa", "#34d399", "#f472b6", "#fbbf24", "#f97316"];
 
@@ -66,6 +69,7 @@ export function SingleProject() {
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [emblaRef] = useEmblaCarousel({ loop: false });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,9 +111,9 @@ export function SingleProject() {
         )}
 
         {/* Top nav bar */}
-        <div className="relative z-20 max-w-6xl mx-auto px-6 pt-10">
+        <div className="relative z-20 max-w-6xl mx-auto px-6 pt-32">
           {/* Breadcrumb */}
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 mb-16">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap items-center gap-2 mb-16">
             <button onClick={() => navigate("/")} className="text-xs font-medium hover:text-white transition-colors" style={{ color: "#4a6080", fontFamily: "Inter, sans-serif" }}>
               Home
             </button>
@@ -162,19 +166,31 @@ export function SingleProject() {
 
             {/* Action buttons */}
             <div className="flex flex-wrap items-center gap-3 mt-8">
-              {project.link && project.link !== "#" && (
-                <a href={project.link} target="_blank" rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                  style={{ background: accent, color: "#fff", fontFamily: "Inter, sans-serif", boxShadow: `0 8px 30px ${accent}40` }}>
-                  <ExternalLink size={15} /> Live Project
-                </a>
-              )}
-              {project.githubLink && project.githubLink !== "#" && (
-                <a href={project.githubLink} target="_blank" rel="noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:bg-white/10"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "#e2e8f0", fontFamily: "Inter, sans-serif" }}>
-                  <Github size={15} /> GitHub
-                </a>
+              {project.category?.toLowerCase() === 'app' ? (
+                <>
+                  {project.link && project.link !== "#" && (
+                    <a href={project.link} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      style={{ background: accent, color: "#fff", fontFamily: "Inter, sans-serif", boxShadow: `0 8px 30px ${accent}40` }}>
+                      <Smartphone size={15} /> Play Store
+                    </a>
+                  )}
+                  {project.appStoreLink && project.appStoreLink !== "#" && (
+                    <a href={project.appStoreLink} target="_blank" rel="noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      style={{ background: "#000", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", fontFamily: "Inter, sans-serif" }}>
+                      <Apple size={15} /> App Store
+                    </a>
+                  )}
+                </>
+              ) : (
+                project.link && project.link !== "#" && (
+                  <a href={project.link} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                    style={{ background: accent, color: "#fff", fontFamily: "Inter, sans-serif", boxShadow: `0 8px 30px ${accent}40` }}>
+                    <ExternalLink size={15} /> Live Project
+                  </a>
+                )
               )}
             </div>
           </motion.div>
@@ -188,11 +204,45 @@ export function SingleProject() {
         {project.image && (
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="rounded-2xl overflow-hidden mb-12 relative"
-            style={{ border: `1px solid ${accent}20`, boxShadow: `0 30px 80px ${accent}15` }}
+            className={`flex justify-center mb-12`}
           >
-            <img src={project.image} alt={project.title} className="w-full object-cover max-h-[500px]" />
-            <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: `inset 0 0 0 1px ${accent}15` }} />
+            {project.category?.toLowerCase().includes('app') ? (
+              <>
+                <style>{`
+                  .marvel-device.iphone-x .notch { display: none !important; }
+                  .embla { overflow: hidden; width: 100%; height: 100%; background: #fff; cursor: grab; }
+                  .embla:active { cursor: grabbing; }
+                  .embla__container { display: flex; width: 100%; height: 100%; }
+                  .embla__slide { flex: 0 0 100%; min-width: 0; display: flex; align-items: center; justify-content: center; height: 100%; }
+                `}</style>
+                <DeviceFrameset device="iPhone X" color="black" width={300} height={650}>
+                  <div className="embla" ref={emblaRef}>
+                    <div className="embla__container">
+                      <div className="embla__slide">
+                        <img src={project.image} alt={project.title} className="w-full object-contain h-full" draggable="false" />
+                      </div>
+                      {project.gallery && project.gallery.map((img: string, i: number) => (
+                        <div key={i} className="embla__slide">
+                          <img src={img} alt={`${project.title} gallery ${i}`} className="w-full object-contain h-full" draggable="false" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </DeviceFrameset>
+              </>
+            ) : (
+              <div 
+                className="rounded-2xl overflow-hidden relative w-full"
+                style={{ border: `1px solid ${accent}20`, boxShadow: `0 30px 80px ${accent}15` }}
+              >
+                <img 
+                  src={project.image} 
+                  alt={project.title} 
+                  className="w-full object-cover max-h-[500px]" 
+                />
+                <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: `inset 0 0 0 1px ${accent}15` }} />
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -362,33 +412,54 @@ export function SingleProject() {
                 <h2 className="text-xs font-bold uppercase tracking-widest" style={{ color: "#4a6080", fontFamily: "Inter, sans-serif" }}>Links</h2>
               </div>
 
-              {project.link && project.link !== "#" ? (
-                <a href={project.link} target="_blank" rel="noreferrer"
-                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
-                  style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
-                  <span className="flex items-center gap-2">
-                    <Globe size={14} style={{ color: accent }} />
-                    Live Project
-                  </span>
-                  <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: accent }} />
-                </a>
+              {project.category?.toLowerCase() === 'app' ? (
+                <>
+                  {project.link && project.link !== "#" && (
+                    <a href={project.link} target="_blank" rel="noreferrer"
+                      className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
+                      style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+                      <span className="flex items-center gap-2">
+                        <Smartphone size={14} style={{ color: accent }} />
+                        Play Store
+                      </span>
+                      <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: accent }} />
+                    </a>
+                  )}
+                  {project.appStoreLink && project.appStoreLink !== "#" && (
+                    <a href={project.appStoreLink} target="_blank" rel="noreferrer"
+                      className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
+                      style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+                      <span className="flex items-center gap-2">
+                        <Apple size={14} style={{ color: "#fff" }} />
+                        App Store
+                      </span>
+                      <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: "#fff" }} />
+                    </a>
+                  )}
+                  {(!project.link || project.link === "#") && (!project.appStoreLink || project.appStoreLink === "#") && (
+                    <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}>
+                      <Smartphone size={14} style={{ color: "#2a3a50" }} />
+                      <span style={{ color: "#2a3a50", fontFamily: "Inter, sans-serif" }}>No link available</span>
+                    </div>
+                  )}
+                </>
               ) : (
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}>
-                  <Globe size={14} style={{ color: "#2a3a50" }} />
-                  <span style={{ color: "#2a3a50", fontFamily: "Inter, sans-serif" }}>No live link available</span>
-                </div>
-              )}
-
-              {project.githubLink && project.githubLink !== "#" && (
-                <a href={project.githubLink} target="_blank" rel="noreferrer"
-                  className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
-                  style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
-                  <span className="flex items-center gap-2">
-                    <Github size={14} />
-                    GitHub Repository
-                  </span>
-                  <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" />
-                </a>
+                project.link && project.link !== "#" ? (
+                  <a href={project.link} target="_blank" rel="noreferrer"
+                    className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
+                    style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
+                    <span className="flex items-center gap-2">
+                      <Globe size={14} style={{ color: accent }} />
+                      Live Project
+                    </span>
+                    <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: accent }} />
+                  </a>
+                ) : (
+                  <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}>
+                    <Globe size={14} style={{ color: "#2a3a50" }} />
+                    <span style={{ color: "#2a3a50", fontFamily: "Inter, sans-serif" }}>No link available</span>
+                  </div>
+                )
               )}
             </motion.div>
           </div>
