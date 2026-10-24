@@ -40,11 +40,18 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#020617", position: "relative" }}>
       
-      {/* Global Seamless Background Gradient */}
+      {/* Global Seamless Background Mesh & Precision Microgrid */}
       <div 
         className="fixed inset-0 z-0 pointer-events-none" 
         style={{
-          background: "radial-gradient(ellipse at top center, rgba(30, 58, 138, 0.02) 0%, transparent 60%), radial-gradient(circle at center, rgba(15, 23, 42, 0.2) 0%, #020617 100%)"
+          backgroundImage: `
+            radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
+            radial-gradient(circle at 90% 35%, rgba(167, 139, 250, 0.08) 0%, transparent 45%),
+            radial-gradient(circle at 10% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 45%),
+            radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: "100% 100%, 100% 100%, 100% 100%, 36px 36px",
+          backgroundColor: "#020617"
         }} 
       />
 

@@ -31,7 +31,7 @@ export function ProcessSection() {
   const rightProcesses = processes.slice(Math.ceil(processes.length / 2));
 
   // Determine line curves based on position
-  const getLineStyle = (isLeft: boolean, index: number, total: number) => {
+  const getLineStyle = (_isLeft: boolean, index: number, total: number) => {
     const isTop = index < total / 2 - 0.5;
     const isBottom = index > total / 2 - 0.5;
     const isMiddle = !isTop && !isBottom;
