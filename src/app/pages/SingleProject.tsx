@@ -6,6 +6,7 @@ import apiClient from "../../api/client";
 import { DeviceFrameset } from 'react-device-frameset';
 import 'react-device-frameset/styles/marvel-devices.min.css';
 import useEmblaCarousel from 'embla-carousel-react';
+import { WebMockupViewer } from "../components/WebMockupViewer";
 
 const accentPalette = ["#3b82f6", "#a78bfa", "#34d399", "#f472b6", "#fbbf24", "#f97316"];
 
@@ -91,6 +92,9 @@ export function SingleProject() {
 
   const accent = getAccent(project.category);
   const tech: string[] = project.techStack || project.tags || [];
+  const cleanLiveLink = project.link ? project.link.replace(/^#+/, "").trim() : "";
+  const isApp = project.category?.toLowerCase().includes('app');
+  const isWeb = project.category?.toLowerCase().includes('web') || (!isApp && Boolean(cleanLiveLink));
 
   return (
     <div className="min-h-screen" style={{ background: "#050b14" }}>
@@ -166,10 +170,10 @@ export function SingleProject() {
 
             {/* Action buttons */}
             <div className="flex flex-wrap items-center gap-3 mt-8">
-              {project.category?.toLowerCase() === 'app' ? (
+              {isApp ? (
                 <>
-                  {project.link && project.link !== "#" && (
-                    <a href={project.link} target="_blank" rel="noreferrer"
+                  {cleanLiveLink && (
+                    <a href={cleanLiveLink} target="_blank" rel="noreferrer"
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                       style={{ background: accent, color: "#fff", fontFamily: "Inter, sans-serif", boxShadow: `0 8px 30px ${accent}40` }}>
                       <Smartphone size={15} /> Play Store
@@ -184,8 +188,8 @@ export function SingleProject() {
                   )}
                 </>
               ) : (
-                project.link && project.link !== "#" && (
-                  <a href={project.link} target="_blank" rel="noreferrer"
+                cleanLiveLink && (
+                  <a href={cleanLiveLink} target="_blank" rel="noreferrer"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                     style={{ background: accent, color: "#fff", fontFamily: "Inter, sans-serif", boxShadow: `0 8px 30px ${accent}40` }}>
                     <ExternalLink size={15} /> Live Project
@@ -200,51 +204,56 @@ export function SingleProject() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 pb-28 mt-4 relative z-10">
 
-        {/* Project Image (large) */}
-        {project.image && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className={`flex justify-center mb-12`}
-          >
-            {project.category?.toLowerCase().includes('app') ? (
-              <>
-                <style>{`
-                  .marvel-device.iphone-x .notch { display: none !important; }
-                  .embla { overflow: hidden; width: 100%; height: 100%; background: #fff; cursor: grab; }
-                  .embla:active { cursor: grabbing; }
-                  .embla__container { display: flex; width: 100%; height: 100%; }
-                  .embla__slide { flex: 0 0 100%; min-width: 0; display: flex; align-items: center; justify-content: center; height: 100%; }
-                `}</style>
-                <DeviceFrameset device="iPhone X" color="black" width={300} height={650}>
-                  <div className="embla" ref={emblaRef}>
-                    <div className="embla__container">
-                      <div className="embla__slide">
-                        <img src={project.image} alt={project.title} className="w-full object-contain h-full" draggable="false" />
-                      </div>
-                      {project.gallery && project.gallery.map((img: string, i: number) => (
-                        <div key={i} className="embla__slide">
-                          <img src={img} alt={`${project.title} gallery ${i}`} className="w-full object-contain h-full" draggable="false" />
-                        </div>
-                      ))}
+        {/* Project Preview / Mockup Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="flex justify-center mb-12 w-full"
+        >
+          {isApp ? (
+            <>
+              <style>{`
+                .marvel-device.iphone-x .notch { display: none !important; }
+                .embla { overflow: hidden; width: 100%; height: 100%; background: #fff; cursor: grab; }
+                .embla:active { cursor: grabbing; }
+                .embla__container { display: flex; width: 100%; height: 100%; }
+                .embla__slide { flex: 0 0 100%; min-width: 0; display: flex; align-items: center; justify-content: center; height: 100%; }
+              `}</style>
+              <DeviceFrameset device="iPhone X" color="black" width={300} height={650}>
+                <div className="embla" ref={emblaRef}>
+                  <div className="embla__container">
+                    <div className="embla__slide">
+                      <img src={project.image} alt={project.title} className="w-full object-contain h-full" draggable="false" />
                     </div>
+                    {project.gallery && project.gallery.map((img: string, i: number) => (
+                      <div key={i} className="embla__slide">
+                        <img src={img} alt={`${project.title} gallery ${i}`} className="w-full object-contain h-full" draggable="false" />
+                      </div>
+                    ))}
                   </div>
-                </DeviceFrameset>
-              </>
-            ) : (
-              <div 
-                className="rounded-2xl overflow-hidden relative w-full"
-                style={{ border: `1px solid ${accent}20`, boxShadow: `0 30px 80px ${accent}15` }}
-              >
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full object-cover max-h-[500px]" 
-                />
-                <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: `inset 0 0 0 1px ${accent}15` }} />
-              </div>
-            )}
-          </motion.div>
-        )}
+                </div>
+              </DeviceFrameset>
+            </>
+          ) : isWeb ? (
+            <WebMockupViewer
+              liveUrl={cleanLiveLink}
+              fallbackImage={project.image}
+              projectTitle={project.title}
+              accentColor={accent}
+            />
+          ) : project.image ? (
+            <div 
+              className="rounded-2xl overflow-hidden relative w-full"
+              style={{ border: `1px solid ${accent}20`, boxShadow: `0 30px 80px ${accent}15` }}
+            >
+              <img 
+                src={project.image} 
+                alt={project.title} 
+                className="w-full object-cover max-h-[500px]" 
+              />
+              <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{ boxShadow: `inset 0 0 0 1px ${accent}15` }} />
+            </div>
+          ) : null}
+        </motion.div>
 
         {/* Two column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -412,10 +421,10 @@ export function SingleProject() {
                 <h2 className="text-xs font-bold uppercase tracking-widest" style={{ color: "#4a6080", fontFamily: "Inter, sans-serif" }}>Links</h2>
               </div>
 
-              {project.category?.toLowerCase() === 'app' ? (
+              {isApp ? (
                 <>
-                  {project.link && project.link !== "#" && (
-                    <a href={project.link} target="_blank" rel="noreferrer"
+                  {cleanLiveLink && (
+                    <a href={cleanLiveLink} target="_blank" rel="noreferrer"
                       className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
                       style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
                       <span className="flex items-center gap-2">
@@ -436,7 +445,7 @@ export function SingleProject() {
                       <ExternalLink size={12} className="opacity-40 group-hover:opacity-100 transition-opacity" style={{ color: "#fff" }} />
                     </a>
                   )}
-                  {(!project.link || project.link === "#") && (!project.appStoreLink || project.appStoreLink === "#") && (
+                  {!cleanLiveLink && (!project.appStoreLink || project.appStoreLink === "#") && (
                     <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.06)" }}>
                       <Smartphone size={14} style={{ color: "#2a3a50" }} />
                       <span style={{ color: "#2a3a50", fontFamily: "Inter, sans-serif" }}>No link available</span>
@@ -444,8 +453,8 @@ export function SingleProject() {
                   )}
                 </>
               ) : (
-                project.link && project.link !== "#" ? (
-                  <a href={project.link} target="_blank" rel="noreferrer"
+                cleanLiveLink ? (
+                  <a href={cleanLiveLink} target="_blank" rel="noreferrer"
                     className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:bg-white/5 group"
                     style={{ border: "1px solid rgba(255,255,255,0.07)", color: "#7aa8cc", fontFamily: "Inter, sans-serif" }}>
                     <span className="flex items-center gap-2">
