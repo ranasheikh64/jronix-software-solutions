@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { ArrowLeft, Sparkles, Search, SlidersHorizontal, X } from "lucide-react";
 import apiClient from "../../api/client";
 import { 
@@ -41,12 +41,20 @@ function LoadingSkeleton() {
 }
 
 export function AllProjects() {
-  const [active, setActive] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("category");
+  const [active, setActive] = useState(categoryFromUrl || "All");
   const [searchQuery, setSearchQuery] = useState("");
   const [projectsData, setProjectsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [quickViewProject, setQuickViewProject] = useState<any | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setActive(categoryFromUrl);
+    }
+  }, [categoryFromUrl]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -177,7 +185,14 @@ export function AllProjects() {
               return (
                 <button
                   key={f}
-                  onClick={() => setActive(f)}
+                  onClick={() => {
+                    setActive(f);
+                    if (f === "All") {
+                      setSearchParams({});
+                    } else {
+                      setSearchParams({ category: f });
+                    }
+                  }}
                   className="relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300"
                   style={{
                     background: isSelected ? `${meta.color}25` : "rgba(255,255,255,0.03)",
